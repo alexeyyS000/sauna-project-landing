@@ -43,6 +43,19 @@ INSTALLED_APPS = [
     "landing.apps.LandingConfig",
     "users.apps.UsersConfig",
     "minio_storage",
+    "wagtail.contrib.forms",
+    "wagtail.contrib.redirects",
+    "wagtail.embeds",
+    "wagtail.sites",
+    "wagtail.users",
+    "wagtail.snippets",
+    "wagtail.documents",
+    "wagtail.images",
+    "wagtail.search",
+    "wagtail.admin",
+    "wagtail",
+    "taggit",
+    "modelcluster",
 ]
 
 MIDDLEWARE = [
@@ -54,6 +67,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "app.middleware.ErrorHandlerMiddleware",
+    "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
 
 ROOT_URLCONF = "app.urls"
@@ -148,13 +162,13 @@ CSRF_TRUSTED_ORIGINS = [
     "http://nginx.your-domain.com",
     f"http://{config.HOST}:80",
 ]
-DEFAULT_FILE_STORAGE="minio_storage.storage.MinioMediaStorage"
+DEFAULT_FILE_STORAGE = "minio_storage.storage.MinioMediaStorage"
 # MINIO_STORAGE_ENDPOINT = config.MINIO_STORAGE_ENDPOINT
 # MINIO_STORAGE_ACCESS_KEY = config.MINIO_STORAGE_ACCESS_KEY
 # MINIO_STORAGE_SECRET_KEY = config.MINIO_STORAGE_SECRET_KEY
-MINIO_STORAGE_ENDPOINT = '127.0.0.1:9000'
-MINIO_STORAGE_ACCESS_KEY = 'minio'
-MINIO_STORAGE_SECRET_KEY = 'minio123'
+MINIO_STORAGE_ENDPOINT = "127.0.0.1:9000"
+MINIO_STORAGE_ACCESS_KEY = "minio"
+MINIO_STORAGE_SECRET_KEY = "minio123"
 MINIO_STORAGE_USE_HTTPS = False
 MINIO_STORAGE_MEDIA_BUCKET_NAME = "local-media"
 MINIO_STORAGE_MEDIA_BACKUP_BUCKET = "local-media"

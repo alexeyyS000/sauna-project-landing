@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "sauna"
+name = "sauna-project-landing"
 version = "0.1.0"
 description = ""
 authors = ["alexeyyS000"]
@@ -11,9 +11,13 @@ python-dotenv = "^1.0.1"
 django-minio-storage = "^0.5.7"
 celery = {extras = ["redis"], version = "^5.4.0"}
 django-redis = "^5.4.0"
-psycopg = "^3.2.1"
 minio = "^7.2.8"
 django = "^4.2.6"
+psycopg = "^3.2.1"
+psycopg2-binary = "^2.9.9"
+pillow = "^10.4.0"
+wagtail = "^6.2.1"
+black = "^24.8.0"
 
 [build-system]
 requires = ["poetry-core"]

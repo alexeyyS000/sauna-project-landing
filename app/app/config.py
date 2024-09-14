@@ -27,8 +27,6 @@
 # HOST = os.environ.get("HOST")
 
 
-
-
 import os
 
 from dotenv import load_dotenv

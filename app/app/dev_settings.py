@@ -21,8 +21,6 @@
 # DEBUG = True
 
 
-
-
 import os
 
 import dotenv

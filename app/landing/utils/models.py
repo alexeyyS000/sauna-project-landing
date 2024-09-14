@@ -34,4 +34,3 @@ class SizeRestrictedImageField(ImageField):
             )
 
         return data
-

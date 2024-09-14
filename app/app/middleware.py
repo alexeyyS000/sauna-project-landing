@@ -22,6 +22,12 @@ class ErrorHandlerMiddleware:
                 return render(
                     request,
                     "errors/base.html",
-                    {"status": exception.status, "message": exception.message, "error_name": exception.error_name},
+                    {
+                        "status": exception.status,
+                        "message": exception.message,
+                        "error_name": exception.error_name,
+                    },
                 )
-            return HttpResponse("Error processing the request.", status=HTTPStatus.INTERNAL_SERVER_ERROR)
+            return HttpResponse(
+                "Error processing the request.", status=HTTPStatus.INTERNAL_SERVER_ERROR
+            )
