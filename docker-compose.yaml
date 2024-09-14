@@ -1,0 +1,54 @@
+version: '3.9'
+services:
+  app:
+    restart: always
+    build: .
+    command: bash -c "python manage.py runserver 0.0.0.0:8000"
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - minio
+      - redis
+      
+  worker:
+    restart: always
+    build: .
+    command: celery -A app worker -l INFO
+    env_file:
+      - .env
+    depends_on:
+      - app
+
+  postgres:
+    restart: always
+    image: postgres:15.3-alpine
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    env_file:
+      - .env
+  minio:
+    image: minio/minio:RELEASE.2021-04-06T23-11-00Z
+    volumes:
+      - minio-data:/minio-data
+    env_file:
+      - .env
+    command: minio server /minio-data/minio/
+
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+    ports:
+      - 80:80
+    depends_on:
+      - app
+  redis:
+    restart: always
+    image: redis:7.0-alpine
+
+    
+volumes:
+  postgres-data:
+  minio-data:
+  

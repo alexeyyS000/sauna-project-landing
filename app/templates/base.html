@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Банный комплекс</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'users/style.css' %}">
+    <style>
+        /* Основные стили для шапки с каруселью */
+        header {
+            position: relative;
+            overflow: hidden;
+            height: 60vh; /* Высота шапки, можно настроить по вкусу */
+            display: flex;
+            align-items: center; /* Центрирование содержимого по вертикали */
+        }
+
+        .carousel-inner {
+            height: 100%;
+        }
+
+        .carousel-item {
+            height: 100%;
+        }
+
+        .carousel-item img {
+            height: 100%;
+            width: 100%;
+            object-fit: cover; /* Обеспечивает, что изображение будет покрывать весь элемент */
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            header {
+                height: 40vh; /* Уменьшаем высоту для мобильных устройств */
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section with Carousel -->
+    <header class="text-white text-center">
+        <div id="headerCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <!-- Example of images from S3 (replace with your real paths) -->
+                <div class="carousel-item active">
+                    <img src="http://localhost:9000/head-images/a67vqc465rkvoh438u5w0dsh79xajmdb.jpg?Content-Disposition=attachment%3B%20filename%3D%22a67vqc465rkvoh438u5w0dsh79xajmdb.jpg%22&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minio%2F20240824%2F%2Fs3%2Faws4_request&X-Amz-Date=20240824T215309Z&X-Amz-Expires=432000&X-Amz-SignedHeaders=host&X-Amz-Signature=b2cf182f74ba7da39004e7cd901e3d7936e1a9617f67a2510d16ac55f5cb3e10" class="d-block" alt="Баня 1">
+                </div>
+                <div class="carousel-item">
+                    <img src="http://localhost:9000/head-images/5qs7skhrhcc8gdjqb1nhplrr54qu8yzi.jpg?Content-Disposition=attachment%3B%20filename%3D%225qs7skhrhcc8gdjqb1nhplrr54qu8yzi.jpg%22&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minio%2F20240824%2F%2Fs3%2Faws4_request&X-Amz-Date=20240824T215326Z&X-Amz-Expires=432000&X-Amz-SignedHeaders=host&X-Amz-Signature=34321b5a15d4a37102b0def8a547a4c73b77532e47880b369efc4deb7983c679" class="d-block" alt="Баня 2">
+                </div>
+                <div class="carousel-item">
+                    <img src="http://localhost:9000/head-images/2v1wp8q20ioij9uvy00p95x5cxqs9g5w.jpg?Content-Disposition=attachment%3B%20filename%3D%222v1wp8q20ioij9uvy00p95x5cxqs9g5w.jpg%22&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=minio%2F20240824%2F%2Fs3%2Faws4_request&X-Amz-Date=20240824T215338Z&X-Amz-Expires=432000&X-Amz-SignedHeaders=host&X-Amz-Signature=a5a0ce0169d6290e9625a42b7dd41b803de3cd4976bfd3f48c08e444d67309af" class="d-block" alt="Баня 3">
+                </div>
+            </div>
+            <!-- Carousel controls -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#headerCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Предыдущее</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#headerCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Следующее</span>
+            </button>
+        </div>
+        <div class="carousel-caption d-none d-md-block">
+            <h1>Добро пожаловать в наш банный комплекс</h1>
+            <p>Расслабьтесь и отдохните с комфортом</p>
+            <a href="#services" class="btn btn-primary mt-3">Наши услуги</a>
+        </div>
+    </header>
+
+    <!-- About Section -->
+    <section id="about" class="container py-5">
+        <div class="row">
+            <div class="col-md-6">
+                <h2>О нас</h2>
+                <p>Наш банный комплекс предлагает вам уникальную возможность расслабиться и оздоровиться. Мы предлагаем
+                    традиционные русские бани, финские сауны и многое другое.</p>
+            </div>
+            <div class="col-md-6">
+                <img src="{% static 'landing/your-image.jpg' %}" class="img-fluid" alt="О нас">
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="bg-light py-5">
+        <div class="container">
+            <h2 class="text-center">Наши услуги</h2>
+            <div class="row text-center mt-4">
+                <div class="col-md-4">
+                    <i class="bi bi-droplet" style="font-size: 3rem;"></i>
+                    <h4>Традиционные бани</h4>
+                    <p>Наслаждайтесь паром в наших традиционных банях.</p>
+                </div>
+                <div class="col-md-4">
+                    <i class="bi bi-heart" style="font-size: 3rem;"></i>
+                    <h4>Оздоровительные процедуры</h4>
+                    <p>Массажи, SPA и многое другое для вашего здоровья.</p>
+                </div>
+                <div class="col-md-4">
+                    <i class="bi bi-people" style="font-size: 3rem;"></i>
+                    <h4>Семейные и корпоративные мероприятия</h4>
+                    <p>Организация праздников, банкетов и корпоративов.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="container py-5">
+        <h2 class="text-center">Свяжитесь с нами</h2>
+        <div class="row justify-content-center mt-4">
+            <div class="col-md-6">
+                <form>
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Ваше имя</label>
+                        <input type="text" class="form-control" id="name" placeholder="Введите ваше имя">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" placeholder="Введите ваш email">
+                    </div>
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Сообщение</label>
+                        <textarea class="form-control" id="message" rows="3" placeholder="Ваше сообщение"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Отправить</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3">
+        <p>&copy; 2024 Банный комплекс. Все права защищены.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

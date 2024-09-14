@@ -1,0 +1,60 @@
+/* Основные стили */
+body {
+  font-family: Arial, sans-serif;
+}
+
+header {
+  background: url('https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.m-kamin.ru%2Fbuyers%2Fstati%2Fbannye-pechi%2Fbannaya-pech-atmosfera-traditsii-i-novatsii.html&psig=AOvVaw29ISd3ntljNV1wroyS2KWY&ust=1724618897435000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCIC1-ZjAjogDFQAAAAAdAAAAABAE') no-repeat center center;
+  background-size: cover;
+}
+
+section {
+  padding: 60px 0;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  header h1 {
+      font-size: 2rem;
+  }
+
+  header p {
+      font-size: 1rem;
+  }
+}
+
+
+
+
+
+.form-signin {
+  max-width: 330px;
+  padding: 1rem;
+}
+
+.form-signin .form-floating:focus-within {
+  z-index: 2;
+}
+
+.form-signin input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+
+.before-space {
+  margin-top: 60px;
+}
+
+
+.link-body-emphasis {
+  color: RGBA(var(--bs-emphasis-color-rgb),var(--bs-link-opacity,1));
+}
+
