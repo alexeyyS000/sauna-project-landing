@@ -3,7 +3,7 @@ services:
   app:
     restart: always
     build: .
-    command: bash -c "python3 manage.py runserver --settings=sauna_landing.settings.pruduction 0.0.0.0:8000"
+    command: bash -c "python3 manage.py runserver"
     env_file:
       - .env
     depends_on:

@@ -12,16 +12,41 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+from pathlib import Path
+import environ
 
-PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
-
+ROOT_DIR = Path(BASE_DIR) / '..'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
+env = environ.Env(DEBUG=(bool, True))
+env.read_env(
+    ROOT_DIR/'.env', override = True
+)
 
-# Application definition
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": env("POSTGRES_DB"),
+        "USER": env("POSTGRES_USER"),
+        "PASSWORD": env("POSTGRES_PASSWORD"),
+        "HOST": env("DB_HOST"),
+        "PORT": "5432",
+    }
+}
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = env("DEBUG")
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = "django-insecure-x8gl*us_cb8eq*aujzb^l-r&db7x4##7y4ibi@8gv1zjmjf**3"
+
+# SECURITY WARNING: define the correct hosts in production!
+ALLOWED_HOSTS = ["*"]
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 INSTALLED_APPS = [
     "home",
