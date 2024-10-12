@@ -35,7 +35,25 @@ services:
     restart: always
     image: redis:7.0-alpine
 
-    
+
+  telegrambot:
+    restart: always
+    build: .
+    command: bash -c "python3 -m telegrambot.bot"
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+      - redis
+
+  worker:
+    restart: always
+    build: .
+    command: celery -A app worker -l INFO
+    env_file:
+      - .env
+    depends_on:
+      - app
 volumes:
   postgres-data:
 

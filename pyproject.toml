@@ -8,12 +8,14 @@ authors = [
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9.20"
 wagtail = "^6.2.1"
 python-dotenv = "^1.0.1"
 psycopg2-binary = "^2.9.9"
 black = "^24.8.0"
-
+django-test-migrations = "^1.4.0"
+python-telegram-bot = "13.1"
+celery = {extras = ["redis"], version = "^5.3.6"}
 
 [build-system]
 requires = ["poetry-core"]

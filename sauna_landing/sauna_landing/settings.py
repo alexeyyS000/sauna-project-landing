@@ -13,11 +13,11 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 from pathlib import Path
-from dotenv import  load_dotenv
+from dotenv import load_dotenv
 
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
-ROOT_DIR = Path(BASE_DIR) / '..'
+ROOT_DIR = Path(BASE_DIR) / ".."
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -37,6 +37,9 @@ DATABASES = {
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND")
+TELEGRAMBOT_KEY = os.environ.get("TELEGRAMBOT_KEY")
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-x8gl*us_cb8eq*aujzb^l-r&db7x4##7y4ibi@8gv1zjmjf**3"
 
@@ -67,6 +70,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_test_migrations",
+    "telegrambot.apps.TelegrambotConfig",
 ]
 
 MIDDLEWARE = [
