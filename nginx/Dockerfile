@@ -2,7 +2,7 @@ FROM python:3.11 as build
 
 WORKDIR /app
 
-ENV POETRY_VERSION=1.8.3
+ENV POETRY_VERSION=1.8.2
 
 RUN pip install poetry==$POETRY_VERSION
 
@@ -14,7 +14,6 @@ RUN poetry export --format=requirements.txt > requirements.txt
 RUN pip install -r requirements.txt
 
 COPY sauna_landing .
-COPY .env .
 
 RUN python manage.py collectstatic
 

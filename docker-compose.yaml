@@ -49,11 +49,23 @@ services:
   worker:
     restart: always
     build: .
-    command: celery -A app worker -l INFO
+    command: celery -A sauna_landing worker -l INFO
     env_file:
       - .env
     depends_on:
       - app
+
+  migrations:
+    build: .
+    command: bash -c "python3 manage.py migrate"
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    restart: "no"
+    profiles:
+      - migrate
+
 volumes:
   postgres-data:
 

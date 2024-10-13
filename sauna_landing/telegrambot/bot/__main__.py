@@ -1,9 +1,10 @@
+import  django
+django.setup()
+
 import logging
 
 from telegram.ext import Updater, CommandHandler
-
-from sauna_landing.sauna_landing.settings import TELEGRAMBOT_KEY
-
+from django.conf import  settings
 from .handlers import start_command
 
 
@@ -14,9 +15,9 @@ def main() -> None:
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         level=logging.INFO,
     )
-    logger = logging.getLogger(__name__)
+    logger = logging.getLogger(__name__)#structlog
 
-    updater = Updater(token=TELEGRAMBOT_KEY, use_context=True)
+    updater = Updater(token=settings.TELEGRAMBOT_KEY, use_context=True)
 
     dispatcher = updater.dispatcher
 

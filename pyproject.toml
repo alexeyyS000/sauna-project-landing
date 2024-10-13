@@ -13,9 +13,13 @@ wagtail = "^6.2.1"
 python-dotenv = "^1.0.1"
 psycopg2-binary = "^2.9.9"
 black = "^24.8.0"
-django-test-migrations = "^1.4.0"
 python-telegram-bot = "13.1"
 celery = {extras = ["redis"], version = "^5.3.6"}
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.3"
+pytest-django = "^4.9.0"
+django-test-migrations = "^1.4.0"
 
 [build-system]
 requires = ["poetry-core"]
