@@ -1,21 +1,18 @@
 import  django
 django.setup()
 
-import logging
+import structlog
 
 from telegram.ext import Updater, CommandHandler
 from django.conf import  settings
 from .handlers import start_command
 
+logger = structlog.get_logger("telegram_bot")
 
 def main() -> None:
     """Run the bot."""
 
-    logging.basicConfig(
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        level=logging.INFO,
-    )
-    logger = logging.getLogger(__name__)#structlog
+    logger.info("Starting bot...")
 
     updater = Updater(token=settings.TELEGRAMBOT_KEY, use_context=True)
 

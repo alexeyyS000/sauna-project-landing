@@ -15,6 +15,8 @@ psycopg2-binary = "^2.9.9"
 black = "^24.8.0"
 python-telegram-bot = "13.1"
 celery = {extras = ["redis"], version = "^5.3.6"}
+structlog = "^24.4.0"
+python-json-logger = "^2.0.7"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
