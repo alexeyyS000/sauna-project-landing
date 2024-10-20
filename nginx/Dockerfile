@@ -15,7 +15,7 @@ RUN pip install -r requirements.txt
 
 COPY sauna_landing .
 
-RUN python manage.py collectstatic
+RUN python manage.py collectstatic --noinput
 
 FROM nginx:1.19.2-alpine
 RUN rm /etc/nginx/conf.d/default.conf

@@ -89,11 +89,13 @@ structlog.configure(
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 ROOT_DIR = Path(BASE_DIR) / ".."
-
+env_local_path = ROOT_DIR / ".env.local"
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
-load_dotenv()
-
+if env_local_path.exists():
+    load_dotenv(dotenv_path=env_local_path, override=False)
+else:
+    load_dotenv(override=False)
 
 DATABASES = {
     "default": {
