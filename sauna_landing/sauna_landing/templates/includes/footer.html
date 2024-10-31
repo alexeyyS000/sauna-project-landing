@@ -1,0 +1,47 @@
+{% load navigation %}
+
+<style>
+    footer {
+        background-color: #f8f9fa;
+        padding: 20px 0;
+    }
+
+    footer a {
+        color: #000;
+        text-decoration: none;
+    }
+
+    footer a:hover {
+        text-decoration: underline;
+    }
+
+
+</style>
+{% with phone=settings.base.NavigationSettings.phone %}
+<footer class="mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>Контакты</h5>
+                <p>Телефон: {{phone}}</p>
+                <p>Email: info@sauna.ru</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Адрес</h5>
+                <p>ул. Примерная, 12, Москва, Россия</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Социальные сети</h5>
+                <a href="#">Facebook</a><br>
+                <a href="#">Instagram</a><br>
+                <a href="#">VK</a>
+            </div>
+        </div>
+        <div class="text-center mt-3">
+            <p>{% get_footer_text %}</p>
+            <p>&copy; 2024 Sauna Landing. Все права защищены.</p>
+        </div>
+    </div>
+</footer>
+
+{% endwith %}
