@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-
+{% load wagtailcore_tags %}
 {% block body_class %}template-homepage{% endblock %}
 
 {% block extra_css %}
@@ -206,12 +206,10 @@
 
 
 
-
-  <div id="pricing" class="content-block">
+<div id="pricing" class="content-block">
     <h2>Прейскурант и режим работы</h2>
     <p class="text-danger">Запрещено приносить: еду, напитки, веники.</p>
 
-    <!-- Блок прейскуранта с Bootstrap -->
     <div class="table-responsive">
         <table class="table table-striped table-hover">
             <thead class="table-light">
@@ -222,81 +220,17 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Женские дни -->
+                {% for service in page.services.all %}
                 <tr>
-                    <td>Женские дни</td>
-                    <td>Вт, Чт, с <span class="text-danger">12:00 до 22:00</span></td>
-                    <td></td>
+                    <td>{{ service.name }}</td>
+                    <td>{{ service.description|richtext }}</td>
+                    <td>{{ service.price }} ₽</td>
                 </tr>
-                <tr>
-                    <td>2 часа (Мама + дочь)</td>
-                    <td></td>
-                    <td>1500 ₽</td>
-                </tr>
-                <tr>
-                    <td>3 часа (Мама + дочь)</td>
-                    <td></td>
-                    <td>2000 ₽</td>
-                </tr>
-                <tr>
-                    <td>Дополнительный час (Мама + дочь)</td>
-                    <td></td>
-                    <td>750 ₽</td>
-                </tr>
-                <tr>
-                    <td>Дополнительный детский билет</td>
-                    <td></td>
-                    <td>500 ₽</td>
-                </tr>
-
-                <!-- Мужские дни -->
-                <tr>
-                    <td>Мужские дни</td>
-                    <td>Ср, Пт, с <span class="text-danger">12:00 до 22:00</span></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>2 часа (Папа + сын)</td>
-                    <td></td>
-                    <td>1500 ₽</td>
-                </tr>
-                <tr>
-                    <td>3 часа (Папа + сын)</td>
-                    <td></td>
-                    <td>2000 ₽</td>
-                </tr>
-                <tr>
-                    <td>Дополнительный час (Папа + сын)</td>
-                    <td></td>
-                    <td>750 ₽</td>
-                </tr>
-                <tr>
-                    <td>Дополнительный детский билет</td>
-                    <td></td>
-                    <td>500 ₽</td>
-                </tr>
-
-                <!-- Мужские выходные дни -->
-                <tr>
-                    <td>Мужские выходные дни</td>
-                    <td>Сб, Вс, с <span class="text-danger">10:00 до 23:00</span></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td>Общий зал (3 часа)</td>
-                    <td></td>
-                    <td>1800 ₽</td>
-                </tr>
-                <tr>
-                    <td>Кабинка (3 часа)</td>
-                    <td></td>
-                    <td>2000 ₽</td>
-                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
 
-    <!-- Кнопки для бронирования и подробной информации -->
     <div class="d-flex justify-content-between mt-4">
         <a href="{% url 'search' %}" class="btn btn-primary">Забронировать</a>
         <a href="{% url 'search' %}" class="btn btn-secondary">Узнать больше</a>
