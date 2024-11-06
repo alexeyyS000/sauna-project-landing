@@ -1,11 +1,9 @@
 from django.db import models
 
 
-
 from wagtail.admin.panels import (
     FieldPanel,
     MultiFieldPanel,
-
     # import PublishingPanel:
     PublishingPanel,
 )
@@ -33,7 +31,6 @@ from wagtail.snippets.models import register_snippet
 class NavigationSettings(BaseGenericSetting):
     phone = models.CharField(verbose_name="телефон", blank=False)
 
-
     panels = [
         MultiFieldPanel(
             [
@@ -42,6 +39,7 @@ class NavigationSettings(BaseGenericSetting):
             "контакты",
         )
     ]
+
 
 @register_snippet
 class FooterText(

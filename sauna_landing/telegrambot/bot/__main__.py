@@ -1,13 +1,15 @@
-import  django
+import django
+
 django.setup()
 
 import structlog
 
 from telegram.ext import Updater, CommandHandler
-from django.conf import  settings
+from django.conf import settings
 from .handlers import start_command
 
 logger = structlog.get_logger("telegram_bot")
+
 
 def main() -> None:
     """Run the bot."""

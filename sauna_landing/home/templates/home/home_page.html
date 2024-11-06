@@ -7,21 +7,26 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
-  /* Блок логотипа и навигации поверх карусели */
+  /* Глобальные стили */
+  body {
+    font-family: 'Roboto', sans-serif;
+    color: #333;
+  }
+
+  /* Логотип и навигация */
   .carousel-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     z-index: 10;
-    background: rgba(139, 69, 19, 0.4); /* теплый полупрозрачный фон */
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(139, 69, 19, 0.3));
     padding: 15px;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
-  /* Логотип и адрес в одной строке */
   .carousel-overlay .top-row {
     display: flex;
     justify-content: space-between;
@@ -30,142 +35,155 @@
   }
 
   .carousel-overlay .logo img {
-    height: 50px;
+    height: 60px;
+    filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.5));
   }
 
-  /* Новый класс для адреса с рамкой */
   .carousel-overlay .address {
-    font-size: 14px;
+    font-size: 16px;
     color: #ffffff;
-    margin-left: 10px;
-    padding: 8px 12px; /* Внутренние отступы */
-    border: 2px solid #FFF0E0; /* Цвет рамки */
-    border-radius: 8px; /* Скругление углов */
-    background-color: rgba(255, 255, 255, 0.2); /* Полупрозрачный фон для выделения */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Мягкая тень */
+    padding: 8px 12px;
+    border: 2px solid rgba(255, 255, 255, 0.7);
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.3);
   }
 
-  /* Стиль для ссылок, размещенных по всей ширине */
+  /* Навигационные ссылки */
   .carousel-overlay .nav-links {
-    width: 100%;
     display: flex;
-    justify-content: space-around;
+    gap: 15px;
+    justify-content: center;
     margin-top: 10px;
+    flex-wrap: wrap;
   }
 
   .carousel-overlay .nav-links a {
     color: #fff;
-    background-color: #8B4513; /* теплый древесный цвет */
+    background-color: rgba(255, 140, 0, 0.8);
     padding: 8px 15px;
-    border-radius: 20px;
-    font-weight: 600;
-    font-family: 'Georgia', serif; /* шрифт с натуральным ощущением */
+    border-radius: 30px;
+    font-weight: bold;
     text-decoration: none;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* мягкая тень */
+    transition: all 0.3s ease;
+    font-size: 14px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
 
   .carousel-overlay .nav-links a:hover {
-    background-color: #A0522D; /* более темный древесный цвет при наведении */
-    color: #FFF0E0; /* легкий оттенок пара */
+    background-color: #A0522D;
+    color: #FFF0E0;
   }
 
-  /* Карусельная картинка */
+  /* Карусель */
   .carousel-item img {
-    max-height: 500px;
+    max-height: 600px;
     object-fit: cover;
+    filter: brightness(80%);
   }
 
-  /* Стили для блоков с контентом */
+  /* Основной заголовок и кнопки */
+  .container h1 {
+    color: #8B4513;
+    font-weight: 700;
+    font-family: 'Georgia', serif;
+    margin-bottom: 20px;
+    font-size: 36px;
+    text-align: center;
+  }
+
+  .container p {
+    font-size: 18px;
+    color: #555;
+    text-align: center;
+  }
+
+  .container .btn {
+    font-weight: bold;
+    border-radius: 25px;
+    padding: 10px 20px;
+    margin: 5px;
+  }
+
+  /* Контентные блоки */
   .content-block {
-    margin-top: 50px;
-    padding: 20px;
-    border: 1px solid #8B4513; /* Рамка для блока */
-    border-radius: 8px; /* Скругление углов */
-    background-color: rgba(255, 255, 255, 0.9); /* Полупрозрачный фон */
+    margin-top: 40px;
+    padding: 25px;
+    border: none;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
   }
 
   .content-block h2 {
-    margin-bottom: 20px;
-    font-family: 'Georgia', serif; /* Шрифт заголовка */
+    color: #8B4513;
+    font-family: 'Georgia', serif;
+    font-size: 28px;
   }
 
+  .content-block p {
+    color: #555;
+    font-size: 16px;
+  }
 
+  /* Таблица прейскуранта */
+  .table {
+    border-radius: 8px;
+    overflow: hidden;
+  }
 
-  /* Стили для контактной информации */
-.contact-info {
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 8px;
-  padding: 20px;
-  font-family: 'Georgia', serif;
-  color: #8B4513;
-}
+  .table thead {
+    background-color: #8B4513;
+    color: #fff;
+    font-size: 16px;
+  }
 
-.contact-info h4 {
-  font-weight: bold;
-  color: #8B4513;
-}
+  /* Блоки FAQ */
+  .accordion-item .accordion-header button {
+    font-weight: 600;
+    color: #8B4513;
+  }
 
-.contact-info p a {
-  color: #A0522D;
-  text-decoration: none;
-}
+  /* Контакты */
+  .contact-info {
+    padding: 25px;
+    background: #f5f5f5;
+    border-radius: 12px;
+    color: #333;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
 
-.contact-info p a:hover {
-  text-decoration: underline;
-}
+  .contact-info h4 {
+    font-weight: bold;
+    color: #8B4513;
+  }
 
-/* Кнопка "Показать карту" */
-.map-container {
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
+  /* Иконки и ссылки */
+  .contact-info a {
+    color: #A0522D;
+  }
 
-.btn-secondary {
-  background-color: #8B4513;
-  color: #fff;
-  font-weight: 600;
-  border-radius: 20px;
-}
+  .contact-info a:hover {
+    text-decoration: underline;
+  }
 
-.btn-secondary:hover {
-  background-color: #A0522D;
-  color: #FFF0E0;
-}
+  /* Карта */
+  .map-container {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
 
-/* Отделения сауны */
-.sauna-department {
-  background-color: rgba(255, 255, 255, 0.9);
-  border: 1px solid #8B4513;
-  border-radius: 8px;
-  margin-top: 30px;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
+  .btn-secondary {
+    background-color: #8B4513;
+    color: #fff;
+    font-weight: bold;
+    border-radius: 20px;
+  }
 
-.sauna-department h2 {
-  color: #8B4513;
-  font-family: 'Georgia', serif;
-}
-
-.sauna-department img {
-  border-radius: 8px;
-  max-height: 300px;
-  object-fit: cover;
-}
-
-
-
-.content-block p {
-  font-size: 16px;
-  color: #8B4513;
-}
-
-.content-block .row img {
-  max-height: 200px;
-  object-fit: cover;
-}
+  .btn-secondary:hover {
+    background-color: #A0522D;
+    color: #FFF0E0;
+  }
 
 </style>
 
@@ -173,7 +191,6 @@
 
 {% block content %}
 
-<!-- Блок поверх карусели -->
 <div class="carousel-overlay">
   <div class="top-row">
     <p class="address">Сургут, бульвар Писателей, 19а</p>
@@ -191,7 +208,6 @@
   </nav>
 </div>
 
-<!-- Карусель -->
 <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
   <div class="carousel-inner">
     <div class="carousel-item active">
@@ -214,28 +230,15 @@
   </button>
 </div>
 
-<!-- Основной контент страницы -->
+<!-- Основной контент и оформление -->
 <div class="container mt-5">
   <h1>Добро пожаловать в нашу сауну</h1>
-  <p>Мы предлагаем вам уникальные условия для релаксации и отдыха в уютной атмосфере. В нашей сауне есть всё необходимое для полного расслабления: парная, джакузи, бассейн и зона отдыха. Приходите, чтобы ощутить гармонию души и тела.</p>
-
+  <p>Мы предлагаем вам уникальные условия для релаксации и отдыха в уютной атмосфере.</p>
   <a href="{% url 'search' %}" class="btn btn-primary mt-3">Онлайн запись</a>
   <a href="{% url 'search' %}" class="btn btn-secondary mt-3">Обратный звонок</a>
 </div>
 
-<!-- Блоки контента -->
 <div class="container">
-  <div id="males-department" class="content-block">
-    <h2>Мужская №1</h2>
-    <p>Здесь будет контент для мужской сауны.</p>
-  </div>
-
-  <div id="females-department" class="content-block">
-    <h2>Женское отделение</h2>
-    <p>Здесь будет контент для женской сауны.</p>
-  </div>
-
-
 
     {% for department in page.departments %}
     <div class="content-block">
@@ -287,8 +290,6 @@
 
 
 
-
-<!-- Блок Акции с каруселью акций -->
 <div id="promotions" class="content-block" style="background-image: url('{% static 'images/sauna1.jpg' %}'); background-size: cover; padding: 40px 20px;">
   <div class="container text-center text-light">
     <h2>Акции и скидки</h2>
@@ -297,46 +298,21 @@
     <!-- Карусель акций -->
     <div id="promotionsCarousel" class="carousel slide" data-bs-ride="carousel">
       <div class="carousel-inner">
-
-        <!-- Первый слайд с акцией -->
-        <div class="carousel-item active">
-          <div class="row d-flex justify-content-center align-items-center">
-            <div class="col-md-4">
-              <div class="promotion-card p-3 text-center" style="background-color: rgba(255, 255, 255, 0.8); border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
-                <img src="{% static 'images/promotion1.png' %}" class="img-fluid mb-3" alt="Акция 1" style="border-radius: 5px;">
-                <h5>Акция 1</h5>
-                <p>Описание первой акции. Специальное предложение на услуги сауны!</p>
+        {% for promotion in page.promotions.all %}
+          <div class="carousel-item {% if forloop.first %}active{% endif %}">
+            <div class="row d-flex justify-content-center align-items-center">
+              <div class="col-md-4">
+                <div class="promotion-card p-3 text-center" >
+                  {% if promotion.image %}
+                    <img src="{{ promotion.image.file.url }}" class="img-fluid mb-3" alt="{{ promotion.title }}" style="border-radius: 5px;">
+                  {% endif %}
+                  <h5>{{ promotion.title }}</h5>
+                  <p>{{ promotion.description|richtext }}</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-
-        <!-- Второй слайд с акцией -->
-        <div class="carousel-item">
-          <div class="row d-flex justify-content-center align-items-center">
-            <div class="col-md-4">
-              <div class="promotion-card p-3 text-center" style="background-color: rgba(255, 255, 255, 0.8); border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
-                <img src="{% static 'images/promotion2.png' %}" class="img-fluid mb-3" alt="Акция 2" style="border-radius: 5px;">
-                <h5>Акция 2</h5>
-                <p>Описание второй акции. Уникальная скидка для клиентов!</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Третий слайд с акцией -->
-        <div class="carousel-item">
-          <div class="row d-flex justify-content-center align-items-center">
-            <div class="col-md-4">
-              <div class="promotion-card p-3 text-center" style="background-color: rgba(255, 255, 255, 0.8); border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
-                <img src="{% static 'images/promotion3.png' %}" class="img-fluid mb-3" alt="Акция 3" style="border-radius: 5px;">
-                <h5>Акция 3</h5>
-                <p>Описание третьей акции. Не упустите шанс!</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
+        {% endfor %}
       </div>
 
       <!-- Управление каруселью -->
@@ -351,7 +327,6 @@
     </div>
   </div>
 </div>
-
 
 
 <div id="faq" class="content-block">
@@ -408,8 +383,6 @@
     </div>
   </div>
 </div>
-
-
 
 
 {% endblock content %}

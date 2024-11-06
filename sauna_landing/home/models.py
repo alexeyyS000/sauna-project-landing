@@ -1,4 +1,3 @@
-from django.db import models
 from wagtail.models import Page, Orderable
 from wagtail.fields import RichTextField
 from wagtail.admin.panels import FieldPanel, InlinePanel
@@ -11,6 +10,7 @@ from wagtail.fields import StreamField
 from wagtail.admin.panels import FieldPanel
 from django.db import models
 from wagtail.models import Page
+
 
 class Service(Orderable):
     page = ParentalKey("HomePage", on_delete=models.CASCADE, related_name="services")
@@ -41,51 +41,58 @@ class Service(Orderable):
             return self.question
 
 
-
-
-
-
-
-
-
-#
-# class SaunaDepartmentBlock(blocks.StructBlock):
-#     title = blocks.CharBlock(required=True, max_length=60, label="Название отделения")
-#     description = blocks.RichTextBlock(required=True, label="Описание отделения")
-#     image = ImageChooserBlock(required=True, label="Изображение")
-#
-#     class Meta:
-#         template = "blocks/sauna_department_block.html"
-#         icon = "fa-bath"
-#         label = "Отделение сауны"
-
-
-
-
 class DepartmentBlock(StructBlock):
     title = blocks.CharBlock(required=True, max_length=60, label="Название отделения")
     description = RichTextBlock(required=False, verbose_name="Описание отделения")
-    images = StreamBlock([
-        ("image", ImageChooserBlock(required=True))
-    ], verbose_name="Фотографии", required=False)
+    images = StreamBlock(
+        [("image", ImageChooserBlock(required=True))],
+        verbose_name="Фотографии",
+        required=False,
+    )
 
     class Meta:
-        #template = "blocks/sauna_department_block.html"
+        # template = "blocks/sauna_department_block.html"
         icon = "folder"
         label = "Отделение"
 
+
+class Promotion(Orderable):
+    page = ParentalKey("HomePage", on_delete=models.CASCADE, related_name="promotions")
+    title = models.CharField(max_length=255)
+    description = RichTextField(blank=True)
+    image = models.ForeignKey(
+        "wagtailimages.Image",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
+
+    panels = [
+        FieldPanel("title"),
+        FieldPanel("description"),
+        FieldPanel("image"),
+    ]
+
+    def __str__(self):
+        return self.title
 
 
 class HomePage(Page):
     body = RichTextField(blank=True)
 
-    departments = StreamField([
-        ('department', DepartmentBlock(required=False)),
-    ], verbose_name="Отделения сауны", use_json_field=True,)
+    departments = StreamField(
+        [
+            ("department", DepartmentBlock(required=False)),
+        ],
+        verbose_name="Отделения сауны",
+        use_json_field=True,
+    )
 
     content_panels = Page.content_panels + [
         FieldPanel("body"),
         InlinePanel("services", label="Услуги"),
         InlinePanel("faqs", label="Вопросы и ответы"),
-        FieldPanel('departments'),
+        FieldPanel("departments"),
+        InlinePanel("promotions", label="Акции"),
     ]
