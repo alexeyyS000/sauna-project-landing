@@ -16,74 +16,74 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 import structlog
-
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "json": {
-            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
-        },
-        "structlog": {
-            "()": "structlog.stdlib.ProcessorFormatter",
-            "processor": structlog.dev.ConsoleRenderer(),
-            "foreign_pre_chain": [
-                structlog.stdlib.add_logger_name,
-                structlog.stdlib.add_log_level,
-                structlog.processors.TimeStamper(fmt="iso"),
-            ],
-        },
-    },
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-            "formatter": "structlog",
-        },
-        "file": {
-            "class": "logging.FileHandler",
-            "filename": "django_and_bot.log",
-            "formatter": "json",
-        },
-        "django_request_handler": {
-            "class": "logging.StreamHandler",
-            "formatter": "json",
-        },
-    },
-    "loggers": {
-        "django": {
-            "handlers": ["console", "file"],
-            "level": "INFO",
-            "propagate": False,
-        },
-        "django.server": {
-            "handlers": ["django_request_handler"],
-            "level": "INFO",
-            "propagate": False,
-        },
-        "telegram_bot": {
-            "handlers": ["console", "file"],
-            "level": "INFO",
-            "propagate": False,
-        },
-        "": {
-            "handlers": ["console", "file"],
-            "level": "INFO",
-        },
-    },
-}
-
-structlog.configure(
-    processors=[
-        structlog.stdlib.add_logger_name,
-        structlog.stdlib.add_log_level,
-        structlog.processors.TimeStamper(fmt="iso"),
-        structlog.processors.JSONRenderer(),
-    ],
-    context_class=dict,
-    logger_factory=structlog.stdlib.LoggerFactory(),
-    wrapper_class=structlog.stdlib.BoundLogger,
-    cache_logger_on_first_use=True,
-)
+#
+# LOGGING = {
+#     "version": 1,
+#     "disable_existing_loggers": False,
+#     "formatters": {
+#         "json": {
+#             "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
+#         },
+#         "structlog": {
+#             "()": "structlog.stdlib.ProcessorFormatter",
+#             "processor": structlog.dev.ConsoleRenderer(),
+#             "foreign_pre_chain": [
+#                 structlog.stdlib.add_logger_name,
+#                 structlog.stdlib.add_log_level,
+#                 structlog.processors.TimeStamper(fmt="iso"),
+#             ],
+#         },
+#     },
+#     "handlers": {
+#         "console": {
+#             "class": "logging.StreamHandler",
+#             "formatter": "structlog",
+#         },
+#         "file": {
+#             "class": "logging.FileHandler",
+#             "filename": "django_and_bot.log",
+#             "formatter": "json",
+#         },
+#         "django_request_handler": {
+#             "class": "logging.StreamHandler",
+#             "formatter": "json",
+#         },
+#     },
+#     "loggers": {
+#         "django": {
+#             "handlers": ["console", "file"],
+#             "level": "INFO",
+#             "propagate": False,
+#         },
+#         "django.server": {
+#             "handlers": ["django_request_handler"],
+#             "level": "INFO",
+#             "propagate": False,
+#         },
+#         "telegram_bot": {
+#             "handlers": ["console", "file"],
+#             "level": "INFO",
+#             "propagate": False,
+#         },
+#         "": {
+#             "handlers": ["console", "file"],
+#             "level": "INFO",
+#         },
+#     },
+# }
+#
+# structlog.configure(
+#     processors=[
+#         structlog.stdlib.add_logger_name,
+#         structlog.stdlib.add_log_level,
+#         structlog.processors.TimeStamper(fmt="iso"),
+#         structlog.processors.JSONRenderer(),
+#     ],
+#     context_class=dict,
+#     logger_factory=structlog.stdlib.LoggerFactory(),
+#     wrapper_class=structlog.stdlib.BoundLogger,
+#     cache_logger_on_first_use=True,
+# )
 
 
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -146,6 +146,7 @@ INSTALLED_APPS = [
     "search",
     "base",
     "telegrambot.apps.TelegrambotConfig",
+    "users.apps.UsersConfig"
 ]
 
 MIDDLEWARE = [
@@ -284,3 +285,4 @@ WAGTAILDOCS_EXTENSIONS = [
     "xlsx",
     "zip",
 ]
+AUTH_USER_MODEL = "users.User"

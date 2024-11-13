@@ -96,3 +96,4 @@ class HomePage(Page):
         FieldPanel("departments"),
         InlinePanel("promotions", label="Акции"),
     ]
+#TODO сделать динамический адрес через админку шрифт свести к одному названия на русском в админке влидацию в админке на цену на картинки акций итд и валидация блока с контактами  https://yandex.ru/dev/jsapi30/doc/ru/examples/cases/marker-popup    https://getbootstrap.com/docs/5.3/components/modal/
