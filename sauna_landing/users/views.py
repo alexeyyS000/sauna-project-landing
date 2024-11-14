@@ -4,12 +4,9 @@ from .forms import CallbackRequestForm
 
 @csrf_exempt
 def callback_request_view(request):
-    print('in func')
     if request.method == "POST":
-        print('in post')
         form = CallbackRequestForm(request.POST)
         if form.is_valid():
-            print('in save')
             form.save()
             return JsonResponse({"status": "success", "message": "Ваш запрос принят"})
         else:
