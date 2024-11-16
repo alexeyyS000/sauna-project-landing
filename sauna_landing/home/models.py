@@ -1,3 +1,5 @@
+from cProfile import label
+from django import forms
 from wagtail.models import Page, Orderable
 from wagtail.fields import RichTextField
 from wagtail.admin.panels import FieldPanel, InlinePanel
@@ -12,11 +14,58 @@ from django.db import models
 from wagtail.models import Page
 
 
+class CarouselImage(Orderable):
+    page = ParentalKey(
+        "HomePage", on_delete=models.CASCADE, related_name="carousel_images"
+    )
+    image = models.ForeignKey(
+        "wagtailimages.Image",
+        on_delete=models.CASCADE,
+        related_name="+",
+        verbose_name="Картинка для карусели",
+    )
+    caption = models.CharField(
+        max_length=255, blank=True, verbose_name="Описание изображения"
+    )
+    caption_position_x = models.CharField(
+        max_length=10,
+        blank=True,
+        verbose_name="Горизонтальная позиция текста (в %)",
+        default="50%",  # По умолчанию, по центру
+    )
+    caption_position_y = models.CharField(
+        max_length=10,
+        blank=True,
+        verbose_name="Вертикальная позиция текста (в %)",
+        default="90%",  # По умолчанию, внизу
+    )
+
+    overlay_images = models.ManyToManyField(
+        "wagtailimages.Image",
+        related_name="+",
+        blank=True,
+        verbose_name="Дополнительные изображения",
+    )
+
+    panels = [
+        FieldPanel("image"),
+        FieldPanel("caption"),
+        FieldPanel("caption_position_x"),
+        FieldPanel("caption_position_y"),
+        FieldPanel("overlay_images", widget=forms.CheckboxSelectMultiple),
+    ]
+
+    def __str__(self):
+        return self.caption
+
+
 class Service(Orderable):
     page = ParentalKey("HomePage", on_delete=models.CASCADE, related_name="services")
-    name = models.CharField(max_length=255)
-    description = RichTextField(blank=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    name = models.CharField(max_length=255, verbose_name="Название")
+    description = RichTextField(blank=True, verbose_name="Описание")
+    price = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="Цена"
+    )
 
     panels = [
         FieldPanel("name"),
@@ -27,18 +76,19 @@ class Service(Orderable):
     def __str__(self):
         return self.name
 
-    class FAQ(Orderable):
-        page = ParentalKey("HomePage", on_delete=models.CASCADE, related_name="faqs")
-        question = models.CharField(max_length=255)
-        answer = RichTextField(blank=True)
 
-        panels = [
-            FieldPanel("question"),
-            FieldPanel("answer"),
-        ]
+class FAQ(Orderable):
+    page = ParentalKey("HomePage", on_delete=models.CASCADE, related_name="faqs")
+    question = models.CharField(max_length=255, verbose_name="Вопрос")
+    answer = RichTextField(blank=True, verbose_name="Ответ")
 
-        def __str__(self):
-            return self.question
+    panels = [
+        FieldPanel("question"),
+        FieldPanel("answer"),
+    ]
+
+    def __str__(self):
+        return self.question
 
 
 class DepartmentBlock(StructBlock):
@@ -51,21 +101,21 @@ class DepartmentBlock(StructBlock):
     )
 
     class Meta:
-        # template = "blocks/sauna_department_block.html"
         icon = "folder"
         label = "Отделение"
 
 
 class Promotion(Orderable):
     page = ParentalKey("HomePage", on_delete=models.CASCADE, related_name="promotions")
-    title = models.CharField(max_length=255)
-    description = RichTextField(blank=True)
+    title = models.CharField(max_length=255, verbose_name="Название")
+    description = RichTextField(blank=True, verbose_name="Описание")
     image = models.ForeignKey(
         "wagtailimages.Image",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
         related_name="+",
+        verbose_name="Изображение",
     )
 
     panels = [
@@ -79,7 +129,8 @@ class Promotion(Orderable):
 
 
 class HomePage(Page):
-    body = RichTextField(blank=True)
+    body = RichTextField(blank=True, null=True)
+    description = RichTextField(blank=True, null=True)
 
     departments = StreamField(
         [
@@ -91,9 +142,13 @@ class HomePage(Page):
 
     content_panels = Page.content_panels + [
         FieldPanel("body"),
+        FieldPanel("description"),
         InlinePanel("services", label="Услуги"),
         InlinePanel("faqs", label="Вопросы и ответы"),
+        InlinePanel("carousel_images", label="Изображения карусели"),
         FieldPanel("departments"),
         InlinePanel("promotions", label="Акции"),
     ]
-#TODO сделать динамический адрес через админку шрифт свести к одному названия на русском в админке влидацию в админке на цену на картинки акций итд и валидация блока с контактами  https://yandex.ru/dev/jsapi30/doc/ru/examples/cases/marker-popup    https://getbootstrap.com/docs/5.3/components/modal/
+
+
+# TODO сделать динамический адрес через админку шрифт свести к одному названия на русском в админке влидацию в админке на цену на картинки акций итд и валидация блока с контактами  https://yandex.ru/dev/jsapi30/doc/ru/examples/cases/marker-popup    https://getbootstrap.com/docs/5.3/components/modal/

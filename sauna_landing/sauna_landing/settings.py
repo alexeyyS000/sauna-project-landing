@@ -16,6 +16,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 import structlog
+
 #
 # LOGGING = {
 #     "version": 1,
@@ -146,7 +147,7 @@ INSTALLED_APPS = [
     "search",
     "base",
     "telegrambot.apps.TelegrambotConfig",
-    "users.apps.UsersConfig"
+    "users.apps.UsersConfig",
 ]
 
 MIDDLEWARE = [

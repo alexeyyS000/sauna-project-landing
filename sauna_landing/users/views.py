@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .forms import CallbackRequestForm
 
+
 @csrf_exempt
 def callback_request_view(request):
     if request.method == "POST":
