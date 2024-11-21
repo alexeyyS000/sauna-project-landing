@@ -1,5 +1,7 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+
+from telegrambot.tasks import send_message_callback
 from .forms import CallbackRequestForm
 
 
@@ -8,7 +10,8 @@ def callback_request_view(request):
     if request.method == "POST":
         form = CallbackRequestForm(request.POST)
         if form.is_valid():
-            form.save()
+            back_call = form.save()
+            send_message_callback.delay(2)
             return JsonResponse({"status": "success", "message": "Ваш запрос принят"})
         else:
             return JsonResponse({"status": "error", "errors": form.errors})

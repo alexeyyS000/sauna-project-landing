@@ -12,7 +12,7 @@ from wagtail.fields import StreamField
 from wagtail.admin.panels import FieldPanel
 from django.db import models
 from wagtail.models import Page
-
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 class CarouselImage(Orderable):
     page = ParentalKey(
@@ -31,28 +31,28 @@ class CarouselImage(Orderable):
         max_length=10,
         blank=True,
         verbose_name="Горизонтальная позиция текста (в %)",
-        default="50%",  # По умолчанию, по центру
+        default="50%",
     )
     caption_position_y = models.CharField(
         max_length=10,
         blank=True,
         verbose_name="Вертикальная позиция текста (в %)",
-        default="90%",  # По умолчанию, внизу
+        default="90%",
     )
 
-    overlay_images = models.ManyToManyField(
-        "wagtailimages.Image",
-        related_name="+",
-        blank=True,
-        verbose_name="Дополнительные изображения",
-    )
+    # overlay_images = models.ManyToManyField(
+    #     "wagtailimages.Image",
+    #     related_name="+",
+    #     blank=True,
+    #     verbose_name="Дополнительные изображения",
+    # )
 
     panels = [
         FieldPanel("image"),
         FieldPanel("caption"),
         FieldPanel("caption_position_x"),
         FieldPanel("caption_position_y"),
-        FieldPanel("overlay_images", widget=forms.CheckboxSelectMultiple),
+        # FieldPanel("overlay_images", widget=forms.CheckboxSelectMultiple),
     ]
 
     def __str__(self):
@@ -61,10 +61,14 @@ class CarouselImage(Orderable):
 
 class Service(Orderable):
     page = ParentalKey("HomePage", on_delete=models.CASCADE, related_name="services")
-    name = models.CharField(max_length=255, verbose_name="Название")
-    description = RichTextField(blank=True, verbose_name="Описание")
+    name = models.CharField(max_length=255, verbose_name="Название", null=False)
+    description = RichTextField(blank=True, verbose_name="Описание", null=True,)
     price = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, blank=True, verbose_name="Цена"
+        max_digits = 6, decimal_places=0, null=False, verbose_name="Цена",
+    validators = [
+        MinValueValidator(100),
+        MaxValueValidator(100000),
+    ],
     )
 
     panels = [
@@ -79,8 +83,8 @@ class Service(Orderable):
 
 class FAQ(Orderable):
     page = ParentalKey("HomePage", on_delete=models.CASCADE, related_name="faqs")
-    question = models.CharField(max_length=255, verbose_name="Вопрос")
-    answer = RichTextField(blank=True, verbose_name="Ответ")
+    question = models.CharField(max_length=255, verbose_name="Вопрос", null=False)
+    answer = RichTextField(blank=True, verbose_name="Ответ", null=False)
 
     panels = [
         FieldPanel("question"),
@@ -107,8 +111,8 @@ class DepartmentBlock(StructBlock):
 
 class Promotion(Orderable):
     page = ParentalKey("HomePage", on_delete=models.CASCADE, related_name="promotions")
-    title = models.CharField(max_length=255, verbose_name="Название")
-    description = RichTextField(blank=True, verbose_name="Описание")
+    title = models.CharField(max_length=255, verbose_name="Название", null=True)
+    description = RichTextField(blank=True, verbose_name="Описание", null=True)
     image = models.ForeignKey(
         "wagtailimages.Image",
         null=True,

@@ -81,6 +81,12 @@
     filter: brightness(80%);
   }
 
+  .container p {
+    font-size: 18px;
+    color: #555;
+    text-align: center;
+  }
+
   /* Основной заголовок и кнопки */
   .container h1 {
     color: #8B4513;
@@ -91,11 +97,7 @@
     text-align: center;
   }
 
-  .container p {
-    font-size: 18px;
-    color: #555;
-    text-align: center;
-  }
+
 
   .container .btn {
     font-weight: bold;
@@ -217,10 +219,11 @@
     </div>
   </div>
   <nav class="nav-links">
-    <a href="#males-department">Мужская №1</a>
-    <a href="#females-department">Женское отделение</a>
+    {% for department in page.departments %}
+    <a href="#{{ department.id }}">{{ department.value.title }}</a>
+    {% endfor %}
     <a href="#pricing">Прейскурант</a>
-    <a href="#promotions">Акции</a>
+    {%if page.promotions.all%}<a href="#promotions">Акции</a>{%endif%}
     <a href="#faq">Вопрос—ответ</a>
     <a href="#contacts">Карта и контакты</a>
   </nav>
@@ -260,7 +263,7 @@
 
 
 <div class="container mt-5">
-  <h1>{{ page.body }}</h1>
+  <h1>{{ page.body|richtext }}</h1>
   <p>{{ page.description }}</p>
   <a href="{% url 'search' %}" class="btn btn-primary mt-3">Онлайн запись</a>
 
@@ -300,7 +303,7 @@
 <div class="container">
 
     {% for department in page.departments %}
-    <div class="content-block">
+    <div id = "{{department.id}}" class="content-block">
       <h2>{{ department.value.title }}</h2>
 
       <p>{{ department.value.description|richtext }}</p>
@@ -348,7 +351,7 @@
 </div>
 
 
-
+{%if page.promotions.all%}
 <div id="promotions" class="content-block" style="background-image: url('{% static 'images/sauna1.jpg' %}'); background-size: cover; padding: 40px 20px;">
   <div class="container text-center text-light">
     <h2>Акции и скидки</h2>
@@ -386,7 +389,7 @@
     </div>
   </div>
 </div>
-
+{%endif%}
 
 <div id="faq" class="content-block">
   <h2>Вопрос—ответ</h2>

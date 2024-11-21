@@ -3,7 +3,13 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    phone_number = models.CharField(null=False)
+    username = models.CharField(
+        max_length=150,
+        unique=True,
+        null=True,
+        blank=True,
+    )
+    phone_number = models.CharField(null=False, unique=True)
     updated = models.DateTimeField(auto_now=True)
 
 
