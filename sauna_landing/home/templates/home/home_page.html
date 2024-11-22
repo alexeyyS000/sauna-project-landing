@@ -74,12 +74,7 @@
     color: #FFF0E0;
   }
 
-  /* Карусель */
-  .carousel-item img {
-    max-height: 600px;
-    object-fit: cover;
-    filter: brightness(80%);
-  }
+
 
   .container p {
     font-size: 18px;
@@ -205,6 +200,21 @@
     z-index: 20;
 }
 
+
+.carousel-item {
+  position: relative; /* Родительский элемент для текста */
+}
+
+
+.carousel-item img {
+  max-height: 600px;
+  object-fit: cover;
+  filter: brightness(80%);
+  display: block; /* Убираем возможные баги с inline-изображениями */
+  width: 100%; /* Изображение всегда занимает всю ширину */
+}
+
+
 </style>
 
 {% endblock extra_css %}
@@ -232,20 +242,21 @@
 <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
   <div class="carousel-inner">
 {% for carousel_image in page.carousel_images.all %}
-  <div class="carousel-item {% if forloop.first %}active{% endif %}">
-    <img src="{{ carousel_image.image.file.url }}" class="d-block w-100 img-fluid" alt="{{ carousel_image.caption }}">
+    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+  <div style="position: relative;">
+    <!-- Изображение -->
+    <img src="{{ carousel_image.image.file.url }}" class="d-block w-100 img-fluid" alt="{{ carousel_image.image.title }}">
 
-    {% if carousel_image.caption %}
-      <div class="carousel-caption d-none d-md-block"
-           style="position: absolute; left: {{ carousel_image.caption_position_x }}; top: {{ carousel_image.caption_position_y }};">
-        <p>{{ carousel_image.caption }}</p>
+    <!-- Текстовые блоки поверх изображения -->
+    {% for block in carousel_image.custom_content %}
+      <div
+        class="{{ block.value.css_class }}"
+        style="position: absolute; {{ block.value.style }}">
+        {{ block.value.html|safe }}
       </div>
-    {% endif %}
-
-    {% for overlay_image in carousel_image.overlay_images.all %}
-      <img src="{{ overlay_image.file.url }}" class="overlay-image" style="position: absolute; top: 0; left: 0; z-index: 20;">
     {% endfor %}
   </div>
+</div>
 {% endfor %}
 
 
@@ -263,8 +274,8 @@
 
 
 <div class="container mt-5">
-  <h1>{{ page.body|richtext }}</h1>
-  <p>{{ page.description }}</p>
+  <h1>{{ page.body }}</h1>
+  <p>{{ page.description|richtext }}</p>
   <a href="{% url 'search' %}" class="btn btn-primary mt-3">Онлайн запись</a>
 
 

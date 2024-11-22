@@ -1,18 +1,31 @@
-from cProfile import label
-from django import forms
-from wagtail.models import Page, Orderable
+from wagtail.models import Orderable
 from wagtail.fields import RichTextField
-from wagtail.admin.panels import FieldPanel, InlinePanel
+from wagtail.admin.panels import InlinePanel
 from modelcluster.fields import ParentalKey
 
 from wagtail import blocks
 from wagtail.images.blocks import ImageChooserBlock
-from wagtail.blocks import StructBlock, StreamBlock, RichTextBlock
-from wagtail.fields import StreamField
+from wagtail.blocks import StreamBlock
+
 from wagtail.admin.panels import FieldPanel
 from django.db import models
 from wagtail.models import Page
 from django.core.validators import MinValueValidator, MaxValueValidator
+
+
+
+
+
+from wagtail.blocks import StructBlock, TextBlock, CharBlock, RichTextBlock, RawHTMLBlock
+from wagtail.fields import StreamField
+
+class CustomContentBlock(StructBlock):
+    html = RawHTMLBlock(required=False, label="HTML код")
+    css_class = CharBlock(required=False, label="CSS классы")
+    style = TextBlock(required=False, label="Inline стили (CSS)")
+
+    class Meta:
+        label = "Кастомный блок контента"
 
 class CarouselImage(Orderable):
     page = ParentalKey(
@@ -24,39 +37,23 @@ class CarouselImage(Orderable):
         related_name="+",
         verbose_name="Картинка для карусели",
     )
-    caption = models.CharField(
-        max_length=255, blank=True, verbose_name="Описание изображения"
-    )
-    caption_position_x = models.CharField(
-        max_length=10,
+    custom_content = StreamField(
+        [("custom_block", CustomContentBlock())],
         blank=True,
-        verbose_name="Горизонтальная позиция текста (в %)",
-        default="50%",
+        verbose_name="Кастомный HTML/CSS контент"
     )
-    caption_position_y = models.CharField(
-        max_length=10,
-        blank=True,
-        verbose_name="Вертикальная позиция текста (в %)",
-        default="90%",
-    )
-
-    # overlay_images = models.ManyToManyField(
-    #     "wagtailimages.Image",
-    #     related_name="+",
-    #     blank=True,
-    #     verbose_name="Дополнительные изображения",
-    # )
 
     panels = [
         FieldPanel("image"),
-        FieldPanel("caption"),
-        FieldPanel("caption_position_x"),
-        FieldPanel("caption_position_y"),
-        # FieldPanel("overlay_images", widget=forms.CheckboxSelectMultiple),
+        FieldPanel("custom_content"),
     ]
 
     def __str__(self):
-        return self.caption
+        return self.image.title
+
+
+
+
 
 
 class Service(Orderable):
