@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load custom_filters %}
 {% load static %}
 {% load wagtailcore_tags %}
 {% block body_class %}template-homepage{% endblock %}
@@ -244,15 +245,14 @@
 {% for carousel_image in page.carousel_images.all %}
     <div class="carousel-item {% if forloop.first %}active{% endif %}">
   <div style="position: relative;">
-    <!-- Изображение -->
+
     <img src="{{ carousel_image.image.file.url }}" class="d-block w-100 img-fluid" alt="{{ carousel_image.image.title }}">
 
-    <!-- Текстовые блоки поверх изображения -->
     {% for block in carousel_image.custom_content %}
       <div
         class="{{ block.value.css_class }}"
         style="position: absolute; {{ block.value.style }}">
-        {{ block.value.html|safe }}
+        {{ block.value.html|render_template:request|safe }}
       </div>
     {% endfor %}
   </div>
@@ -368,7 +368,7 @@
     <h2>Акции и скидки</h2>
     <p>Специальные предложения для наших гостей.</p>
 
-    <!-- Карусель акций -->
+
     <div id="promotionsCarousel" class="carousel slide" data-bs-ride="carousel">
       <div class="carousel-inner">
         {% for promotion in page.promotions.all %}
