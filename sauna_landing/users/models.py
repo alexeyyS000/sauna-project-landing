@@ -8,8 +8,9 @@ class User(AbstractUser):
         unique=True,
         null=True,
         blank=True,
-    )
+    ) 
     phone_number = models.CharField(null=False, unique=True)
+    telegram_id = models.IntegerField(null=True)
     updated = models.DateTimeField(auto_now=True)
 
 
