@@ -13,19 +13,24 @@ from wagtail.models import Page
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 
-
-
-
-from wagtail.blocks import StructBlock, TextBlock, CharBlock, RichTextBlock, RawHTMLBlock
+from wagtail.blocks import (
+    StructBlock,
+    TextBlock,
+    CharBlock,
+    RichTextBlock,
+    RawHTMLBlock,
+)
 from wagtail.fields import StreamField
+
 
 class CustomContentBlock(StructBlock):
     html = RawHTMLBlock(required=False, label="HTML код")
-    css_class = CharBlock(required=False, label="CSS классы")
-    style = TextBlock(required=False, label="Inline стили (CSS)")
+    css_class = CharBlock(required=False, label="CSS классы")  # TODO delete this
+    style = TextBlock(required=False, label="Inline стили (CSS)")  # TODO delete this
 
     class Meta:
         label = "Кастомный блок контента"
+
 
 class CarouselImage(Orderable):
     page = ParentalKey(
@@ -40,7 +45,7 @@ class CarouselImage(Orderable):
     custom_content = StreamField(
         [("custom_block", CustomContentBlock())],
         blank=True,
-        verbose_name="Кастомный HTML/CSS контент"
+        verbose_name="Кастомный HTML/CSS контент",
     )
 
     panels = [
@@ -52,20 +57,23 @@ class CarouselImage(Orderable):
         return self.image.title
 
 
-
-
-
-
 class Service(Orderable):
     page = ParentalKey("HomePage", on_delete=models.CASCADE, related_name="services")
     name = models.CharField(max_length=255, verbose_name="Название", null=False)
-    description = RichTextField(blank=True, verbose_name="Описание", null=True,)
+    description = RichTextField(
+        blank=True,
+        verbose_name="Описание",
+        null=True,
+    )
     price = models.DecimalField(
-        max_digits = 6, decimal_places=0, null=False, verbose_name="Цена",
-    validators = [
-        MinValueValidator(100),
-        MaxValueValidator(100000),
-    ],
+        max_digits=6,
+        decimal_places=0,
+        null=False,
+        verbose_name="Цена",
+        validators=[
+            MinValueValidator(100),
+            MaxValueValidator(100000),
+        ],
     )
 
     panels = [
@@ -130,9 +138,15 @@ class Promotion(Orderable):
 
 
 class HomePage(Page):
-    body = RichTextField(blank=True, null=True)
+
+    body = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name="Заголовок"
+    )
     description = RichTextField(blank=True, null=True)
 
+    address = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name="Адрес"
+    )
     departments = StreamField(
         [
             ("department", DepartmentBlock(required=False)),
@@ -144,9 +158,10 @@ class HomePage(Page):
     content_panels = Page.content_panels + [
         FieldPanel("body"),
         FieldPanel("description"),
+        FieldPanel("address"),
         InlinePanel("services", label="Услуги"),
         InlinePanel("faqs", label="Вопросы и ответы"),
-        InlinePanel("carousel_images", label="Изображения карусели"),
+        InlinePanel("carousel_images", label="Изображения карусели"),  # model_admin
         FieldPanel("departments"),
         InlinePanel("promotions", label="Акции"),
     ]

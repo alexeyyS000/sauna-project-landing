@@ -1,62 +1,64 @@
-from telegram import Update, ReplyKeyboardRemove
-from telegram.ext import CommandHandler, MessageHandler, Filters, ConversationHandler, CallbackContext
-
 from django.contrib.auth import get_user_model
 
 UserModel = get_user_model()
 
-SAVE = 1
+
+from telegram import Update
+from telegram.ext import CallbackContext
+import structlog
+
+logger = structlog.get_logger("telegram_bot")
 
 
-
-
-
-def start(update: Update, context: CallbackContext) -> int:
+def start_command(update: Update, context: CallbackContext) -> None:
+    """Handle the /start command."""
     user = update.effective_user
     telegram_id = user.id
 
-    print('STARTTT')
-    if UserModel.objects.filter(telegram_id=telegram_id).exists():
-        update.message.reply_text("Вы уже зарегистрированы!")
-        return ConversationHandler.END
+    logger.info("Received /start command", user_tg_id=telegram_id)
+
+    user = UserModel.objects.filter(telegram_id=telegram_id).first()
+    if user:
+        user.is_active_tg_alerting = True
+        user.save()
+        update.message.reply_text(
+            "Теперь вы получаете уведомления об обратных звонках. Нажмите /unsubscribe чтобы перестать получать сообщения"
+        )
+    else:
+        update.message.reply_text("Вас еще нет в базе.")
 
 
-    update.message.reply_text("Пожалуйста, введите ваше имя:")
-    print('Asking for name. Switching to SAVE state.')
-    return SAVE
+def unsubscribe_command(update: Update, context: CallbackContext) -> None:
+    """Handle the /unsubscribe command."""
+    tg_user = update.effective_user
+    telegram_id = tg_user.id
+
+    logger.info("Received /unsubscribe command", user_tg_id=telegram_id)
+
+    user = UserModel.objects.filter(telegram_id=telegram_id).first()
+    if user:
+        user.is_active_tg_alerting = False
+        user.save()
+        update.message.reply_text(
+            "Теперь вы не получаете уведомления об обратных звонках. Нажмите /subscribe чтобы начать получать сообщения"
+        )
+    else:
+        update.message.reply_text("Вас еще нет в базе.")
 
 
-def enter_name(update: Update, context: CallbackContext) -> int:
-    print('enter_name')
-    user = update.effective_user
-    name = update.message.text.strip()
+def subscribe_command(update: Update, context: CallbackContext) -> None:
+    """Handle the /subscribe command."""
+    tg_user = update.effective_user
+    telegram_id = tg_user.id
 
+    logger.info("Received /subscribe command", user_tg_id=telegram_id)
 
-    UserModel.objects.create(
-        telegram_id=user.id,
-        name=name,
-        username=user.username,
-    )
-
-    update.message.reply_text(f"Спасибо, {name}! Вы зарегистрированы.", reply_markup=ReplyKeyboardRemove())
-    return ConversationHandler.END
-
-
-def cancel(update: Update, context: CallbackContext) -> int:
-    print('cancel')
-    update.message.reply_text("Регистрация отменена.", reply_markup=ReplyKeyboardRemove())
-    return ConversationHandler.END
-
-
-
-start_conv = ConversationHandler(
-    persistent=True,
-    name="start",
-    entry_points=[CommandHandler("start", start)],
-    states={
-        SAVE: [MessageHandler(Filters.text, enter_name)],
-    },
-    fallbacks=[CommandHandler("cancel", cancel)],
-)
-
-
+    user = UserModel.objects.filter(telegram_id=telegram_id).first()
+    if user:
+        user.is_active_tg_alerting = True
+        user.save()
+        update.message.reply_text(
+            "Теперь вы получаете уведомления об обратных звонках. Нажмите /unsubscribe чтобы перестать получать сообщения"
+        )
+    else:
+        update.message.reply_text("Вас еще нет в базе.")

@@ -10,6 +10,7 @@ class CallbackRequestForm(forms.ModelForm):
 
     phone_number = forms.CharField(required=True)
     name = forms.CharField(required=True)
+
     class Meta:
         model = CallbackRequest
         exclude = ["user"]
@@ -22,7 +23,9 @@ class CallbackRequestForm(forms.ModelForm):
     def clean_phone_number(self):
         phone_number = self.cleaned_data.get("phone_number")
 
-        if not is_valid_russian_phone_number(phone_number):#TODO tests is_valid_russian_phone_number
+        if not is_valid_russian_phone_number(
+            phone_number
+        ):  # TODO tests is_valid_russian_phone_number
 
             msg = "Incorrect phone number"
             self.add_error("phone_number", msg)
@@ -31,7 +34,9 @@ class CallbackRequestForm(forms.ModelForm):
     def save(self, commit=True, user=None):
         phone_number = self.cleaned_data["phone_number"]
         try:
-            user = UserModel.objects.get(phone_number=phone_number)#TODO попробовать индекс
+            user = UserModel.objects.get(
+                phone_number=phone_number
+            )  # TODO попробовать индекс
 
         except UserModel.DoesNotExist:
             name = self.cleaned_data["name"]

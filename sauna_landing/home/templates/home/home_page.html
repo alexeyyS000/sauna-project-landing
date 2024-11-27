@@ -224,7 +224,7 @@
 
 <div class="carousel-overlay">
   <div class="top-row">
-    <p class="address">Сургут, бульвар Писателей, 19а</p>
+    <p class="address">{{ page.address }}</p>
     <div class="logo">
       <img src="{% static 'images/logo_surgut.png' %}" alt="Логотип Сургут">
     </div>
@@ -274,7 +274,7 @@
 
 
 <div class="container mt-5">
-  <h1>{{ page.body }}</h1>
+  <h1>{{ page.body|richtext }}</h1>
   <p>{{ page.description|richtext }}</p>
   <a href="{% url 'search' %}" class="btn btn-primary mt-3">Онлайн запись</a>
 

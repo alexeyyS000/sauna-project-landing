@@ -3,6 +3,7 @@ from django.template import Context, Template
 
 register = template.Library()
 
+
 @register.filter
 def render_template(value, context=None):
 
@@ -14,4 +15,4 @@ def render_template(value, context=None):
         return template.render(Context(context or {}))
     except Exception as e:
 
-        return f"Error rendering template: {e}"
+        return f"Error rendering template: {e}"  # TODO rise error and logging
