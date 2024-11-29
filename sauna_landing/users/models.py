@@ -10,9 +10,7 @@ class User(AbstractUser):
         blank=True,
     )
     phone_number = models.CharField(null=False, unique=True)
-    telegram_id = models.BigIntegerField(
-        null=True, blank=True
-    )
+    telegram_id = models.BigIntegerField(null=True, blank=True)
     is_active_tg_alerting = models.BooleanField(null=False, default=False)
     updated = models.DateTimeField(auto_now=True)
 

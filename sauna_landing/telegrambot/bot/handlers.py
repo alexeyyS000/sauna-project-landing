@@ -2,8 +2,8 @@ from django.contrib.auth import get_user_model
 
 UserModel = get_user_model()
 
-
-from telegram import Update
+from users.models import CallbackRequest
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CallbackContext
 import structlog
 
@@ -62,3 +62,46 @@ def subscribe_command(update: Update, context: CallbackContext) -> None:
         )
     else:
         update.message.reply_text("Вас еще нет в базе.")
+
+
+def handle_button_click(update, context):
+    query = update.callback_query
+    query.answer()
+
+    callback_data = query.data
+    if callback_data.startswith("process_"):
+        request_id = int(callback_data.split("_")[1])
+        try:
+
+            callback_request = CallbackRequest.objects.get(id=request_id)
+            if callback_request.is_active:
+                callback_request.is_active = False
+                callback_request.save()
+
+                query.edit_message_text(
+                    text=f"Заявка обработана.\nПользователь {callback_request.user.first_name} с номером {callback_request.user.phone_number} запросил обратный звонок."
+                )
+        except CallbackRequest.DoesNotExist:
+            query.edit_message_text(text="Заявка не найдена или уже обработана.")
+
+
+# Функция для обработки команды /start
+def start2(update: Update, context: CallbackContext) -> None:
+    keyboard = [
+        [InlineKeyboardButton("Кнопка 1", callback_data="button1")],
+        [InlineKeyboardButton("Кнопка 2", callback_data="button2")],
+    ]
+
+    reply_markup = InlineKeyboardMarkup(keyboard)
+    update.message.reply_text("Выберите кнопку:", reply_markup=reply_markup)
+
+
+# Функция для обработки нажатий кнопок
+def button(update: Update, context: CallbackContext) -> None:
+    query = update.callback_query
+    query.answer()  # Это нужно для того, чтобы убрать "крутящийся" индикатор загрузки
+
+    if query.data == "button1":
+        query.edit_message_text(text="Вы нажали кнопку 1!")
+    elif query.data == "button2":
+        query.edit_message_text(text="Вы нажали кнопку 2!")
