@@ -16,7 +16,6 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from wagtail.blocks import (
     StructBlock,
     TextBlock,
-    CharBlock,
     RichTextBlock,
     RawHTMLBlock,
 )
@@ -25,8 +24,7 @@ from wagtail.fields import StreamField
 
 class CustomContentBlock(StructBlock):
     html = RawHTMLBlock(required=False, label="HTML код")
-    css_class = CharBlock(required=False, label="CSS классы")  # TODO delete this
-    style = TextBlock(required=False, label="Inline стили (CSS)")  # TODO delete this
+
 
     class Meta:
         label = "Кастомный блок контента"

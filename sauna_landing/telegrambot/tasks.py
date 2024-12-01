@@ -31,7 +31,7 @@ def send_notification(
             ]
         ]
     )
-    updater = Updater(
+    updater = Updater(#dependency-injector
         token="7511137111:AAEh8u8xihiybbD3ARyGat8m1aMl-qvqy_M", use_context=True
     )
     updater.bot.send_message(chat_id=admin_tg_id, text=message, reply_markup=keyboard)

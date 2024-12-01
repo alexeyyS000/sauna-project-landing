@@ -69,39 +69,38 @@ def handle_button_click(update, context):
     query.answer()
 
     callback_data = query.data
-    if callback_data.startswith("process_"):
-        request_id = int(callback_data.split("_")[1])
+    if callback_data.startswith("process_"):#patametr in calbachHandler
+        request_id = int(callback_data.split("_")[1])#TODO число в регулярке после нижнего подчеркивания
         try:
 
-            callback_request = CallbackRequest.objects.get(id=request_id)
+            callback_request = CallbackRequest.objects.get(id=request_id)#TODO 3 состояния новая в обработке и завершенная  , номер телефона скарыт и показывается только при переходе заявки в статус обработки при этом номер становится недоступен для другиз одминов
             if callback_request.is_active:
                 callback_request.is_active = False
                 callback_request.save()
 
                 query.edit_message_text(
-                    text=f"Заявка обработана.\nПользователь {callback_request.user.first_name} с номером {callback_request.user.phone_number} запросил обратный звонок."
+                    text=f"Заявка обработана.\nПользователь {callback_request.user.first_name} с номером {callback_request.user.phone_number} запросил обратный звонок."#TODO to template
                 )
         except CallbackRequest.DoesNotExist:
             query.edit_message_text(text="Заявка не найдена или уже обработана.")
 
 
-# Функция для обработки команды /start
+
 def start2(update: Update, context: CallbackContext) -> None:
+    logger.info("Received /start2 command",)
     keyboard = [
-        [InlineKeyboardButton("Кнопка 1", callback_data="button1")],
-        [InlineKeyboardButton("Кнопка 2", callback_data="button2")],
+        [InlineKeyboardButton("Кнопка 1", callback_data="button")],
     ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
     update.message.reply_text("Выберите кнопку:", reply_markup=reply_markup)
 
 
-# Функция для обработки нажатий кнопок
 def button(update: Update, context: CallbackContext) -> None:
+    logger.info("Received /button command", )
     query = update.callback_query
-    query.answer()  # Это нужно для того, чтобы убрать "крутящийся" индикатор загрузки
+    query.answer()
 
-    if query.data == "button1":
-        query.edit_message_text(text="Вы нажали кнопку 1!")
-    elif query.data == "button2":
-        query.edit_message_text(text="Вы нажали кнопку 2!")
+
+    query.edit_message_text(text="Вы нажали кнопку 1!")
+

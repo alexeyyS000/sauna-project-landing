@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-{% load custom_filters %}
 {% load static %}
+{% load custom_filters %}
 {% load wagtailcore_tags %}
 {% block body_class %}template-homepage{% endblock %}
 
@@ -215,6 +215,15 @@
   width: 100%; /* Изображение всегда занимает всю ширину */
 }
 
+.custom-html-overlay {
+  position: absolute;
+  top: 50%; /* По центру по вертикали */
+  left: 50%; /* По центру по горизонтали */
+  transform: translate(-50%, -50%);
+  z-index: 10; /* Поверх изображения */
+  color: white; /* Белый текст по умолчанию */
+  text-align: center; /* Центровка текста */
+}
 
 </style>
 
@@ -243,15 +252,13 @@
 <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
   <div class="carousel-inner">
 {% for carousel_image in page.carousel_images.all %}
-    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+<div class="carousel-item {% if forloop.first %}active{% endif %}">
   <div style="position: relative;">
 
     <img src="{{ carousel_image.image.file.url }}" class="d-block w-100 img-fluid" alt="{{ carousel_image.image.title }}">
 
     {% for block in carousel_image.custom_content %}
-      <div
-        class="{{ block.value.css_class }}"
-        style="position: absolute; {{ block.value.style }}">
+      <div class="custom-html-overlay" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; color: white;">
         {{ block.value.html|render_template:request|safe }}
       </div>
     {% endfor %}
