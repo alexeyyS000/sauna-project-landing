@@ -1,24 +1,28 @@
-import json
-
+from django.conf import settings
 from telegram.ext import Updater
 from celery import shared_task
 from django.contrib.auth import get_user_model
-from telegrambot.bot.__main__ import bot_instance
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-
+from dependency_injector.wiring import inject, Provide
+from telegrambot.container import BotContainer
 UserModel = get_user_model()
 
+container = BotContainer()
+container.config.telegrambot_key.from_value(settings.TELEGRAMBOT_KEY)
+container.wire(modules=[__name__, ])
 
 @shared_task(
     name="send_notification",
     autoretry_for=(Exception,),
     retry_kwargs={"max_retries": 3, "countdown": 5},
 )
+@inject
 def send_notification(
     admin_tg_id: int,
     callback_request_id: int,
     user_phone_number: str,
     user_first_name: str,
+    updater: Updater = Provide[BotContainer.updater],
 ):
 
     message = f"Пользователь {user_first_name} с номером {user_phone_number} запросил обратный звонок."
@@ -31,11 +35,9 @@ def send_notification(
             ]
         ]
     )
-    updater = Updater(#dependency-injector
-        token="7511137111:AAEh8u8xihiybbD3ARyGat8m1aMl-qvqy_M", use_context=True
-    )
+    updater = Updater(token = settings.TELEGRAMBOT_KEY)
     updater.bot.send_message(chat_id=admin_tg_id, text=message, reply_markup=keyboard)
-    # bot_instance.send_message(chat_id=admin_tg_id, text=message, reply_markup=keyboard)
+
 
 
 @shared_task(

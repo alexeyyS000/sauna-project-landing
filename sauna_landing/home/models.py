@@ -15,12 +15,11 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 from wagtail.blocks import (
     StructBlock,
-    TextBlock,
     RichTextBlock,
     RawHTMLBlock,
 )
 from wagtail.fields import StreamField
-
+from home.utils.witgets import CodeMirrorPanel
 
 class CustomContentBlock(StructBlock):
     html = RawHTMLBlock(required=False, label="HTML код")
@@ -28,6 +27,8 @@ class CustomContentBlock(StructBlock):
 
     class Meta:
         label = "Кастомный блок контента"
+
+    panels = [FieldPanel("html", widget=CodeMirrorPanel)]
 
 
 class CarouselImage(Orderable):

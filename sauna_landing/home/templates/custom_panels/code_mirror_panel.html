@@ -1,0 +1,27 @@
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'css/codemirror.css' %}">
+<script src="{% static 'js/codemirror/codemirror.js' %}"></script>
+<script src="{% static 'js/codemirror/htmlmixed.js' %}"></script>
+<script src="{% static 'js/codemirror/closetag.js' %}"></script>
+
+<div class="w-field__control">
+    <!-- Выводим значения переменных id и name -->
+    <p>ID: {{ id }}</p>
+    <p>Name: {{ name }}</p>
+
+    <label for="{{ id }}">Введите HTML код:</label>
+    <textarea id="{{ id }}" name="{{ name }}" class="code-mirror-field" autocomplete="off">{{ value|default:'' }}</textarea>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var editor = CodeMirror.fromTextArea(document.getElementById('{{ id }}'), {
+            mode: "htmlmixed",
+            lineNumbers: true,
+            autoCloseTags: true,
+            matchBrackets: true,
+            indentWithTabs: true,
+            tabSize: 4
+        });
+    });
+</script>
