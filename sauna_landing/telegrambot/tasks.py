@@ -25,14 +25,15 @@ def send_notification(
     updater: Updater = Provide[BotContainer.updater],
 ):
 
-    message = f"Пользователь {user_first_name} с номером {user_phone_number} запросил обратный звонок."
+    message = f"Пользователь {user_first_name} запросил обратный звонок."
     keyboard = InlineKeyboardMarkup(
         [
             [
                 InlineKeyboardButton(
-                    "✅ Обработано", callback_data=f"process_{callback_request_id}"
+                    "📞 Показать номер телефона", callback_data=f"show_phone_{callback_request_id}"
                 )
-            ]
+            ],
+
         ]
     )
     updater = Updater(token = settings.TELEGRAMBOT_KEY)

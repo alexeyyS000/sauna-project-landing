@@ -91,6 +91,7 @@ PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 ROOT_DIR = Path(BASE_DIR) / ".."
 env_local_path = ROOT_DIR / ".env.local"
+TG_TEMPLATE_DIR = Path(BASE_DIR) / "telegrambot" / "templates"
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 if env_local_path.exists():

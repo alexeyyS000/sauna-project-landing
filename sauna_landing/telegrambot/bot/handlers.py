@@ -1,7 +1,9 @@
 from django.contrib.auth import get_user_model
 
-UserModel = get_user_model()
+from telegrambot.utils.template import render_template
 
+UserModel = get_user_model()
+from django.shortcuts import get_object_or_404
 from users.models import CallbackRequest
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CallbackContext
@@ -64,43 +66,50 @@ def subscribe_command(update: Update, context: CallbackContext) -> None:
         update.message.reply_text("Вас еще нет в базе.")
 
 
-def handle_button_click(update, context):
+def process_request_handler(update: Update, context: CallbackContext):
+    logger.info("Received /process_request_handler callback")
+
+    query = update.callback_query
+    query.answer()
+
+    callback_request_id = int(query.data.split('_')[1])
+    callback_request = get_object_or_404(CallbackRequest, id=callback_request_id)
+
+    if callback_request.state != CallbackRequest.State.COMPLETED:
+        callback_request.state = CallbackRequest.State.COMPLETED
+        callback_request.save()
+        new_keyboard = InlineKeyboardMarkup(
+            [
+                [],
+            ]
+        )
+        query.edit_message_text(text="Заявка успешно обработана.", reply_markup=None)
+    else:
+        query.edit_message_text(text="Заявка уже была завершена.")
+
+
+def show_phone_handler(update: Update, context: CallbackContext):
+    logger.info("Received /show_phone_handler callback")
     query = update.callback_query
     query.answer()
 
     callback_data = query.data
-    if callback_data.startswith("process_"):#patametr in calbachHandler
-        request_id = int(callback_data.split("_")[1])#TODO число в регулярке после нижнего подчеркивания
-        try:
 
-            callback_request = CallbackRequest.objects.get(id=request_id)#TODO 3 состояния новая в обработке и завершенная  , номер телефона скарыт и показывается только при переходе заявки в статус обработки при этом номер становится недоступен для другиз одминов
-            if callback_request.is_active:
-                callback_request.is_active = False
-                callback_request.save()
+    callback_request_id = int(callback_data.split('_')[2])
+    callback_request = get_object_or_404(CallbackRequest, id=callback_request_id)
 
-                query.edit_message_text(
-                    text=f"Заявка обработана.\nПользователь {callback_request.user.first_name} с номером {callback_request.user.phone_number} запросил обратный звонок."#TODO to template
-                )
-        except CallbackRequest.DoesNotExist:
-            query.edit_message_text(text="Заявка не найдена или уже обработана.")
+    # Проверка состояния заявки
+    if callback_request.state == CallbackRequest.State.NEW:
+        callback_request.state = CallbackRequest.State.IN_PROCESS
+        callback_request.save()
 
+        new_keyboard = InlineKeyboardMarkup(
+            [
+                [InlineKeyboardButton("✅ Завершить обработку", callback_data=f"processed_{callback_request_id}")],
+            ]
+        )
 
-
-def start2(update: Update, context: CallbackContext) -> None:
-    logger.info("Received /start2 command",)
-    keyboard = [
-        [InlineKeyboardButton("Кнопка 1", callback_data="button")],
-    ]
-
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    update.message.reply_text("Выберите кнопку:", reply_markup=reply_markup)
-
-
-def button(update: Update, context: CallbackContext) -> None:
-    logger.info("Received /button command", )
-    query = update.callback_query
-    query.answer()
-
-
-    query.edit_message_text(text="Вы нажали кнопку 1!")
-
+        message = f"Номер телефона пользователя: {callback_request.user.phone_number}"
+        query.edit_message_text(text=message, reply_markup=new_keyboard)
+    else:
+        query.edit_message_text(text="Эта заявка уже в обработке или обработана.")

@@ -18,6 +18,8 @@ celery = {extras = ["redis"], version = "^5.3.6"}
 structlog = "^24.4.0"
 python-json-logger = "^2.0.7"
 dependency-injector = "^4.43.0"
+jinja2 = "^3.1.4"
+emoji = "^2.14.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"

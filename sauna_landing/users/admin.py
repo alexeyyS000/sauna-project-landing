@@ -17,6 +17,6 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(CallbackRequest)
 class CallbackRequestAdmin(admin.ModelAdmin):
-    list_display = ("user", "is_active", "created_at")
-    list_filter = ("is_active", "created_at")
+    list_display = ("user", "state", "created_at")
+    list_filter = ("state", "created_at")
     search_fields = ("user__username",)

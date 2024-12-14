@@ -17,20 +17,18 @@ def main() -> None:
 
     updater = container.updater()
 
-    # updater = Updater(token=settings.TELEGRAMBOT_KEY, use_context=True)
 
     updater.dispatcher.add_handler(CommandHandler("start", handlers.start_command))
-    #
+
     updater.dispatcher.add_handler(CommandHandler("unsubscribe", handlers.unsubscribe_command))
-    #
+
     updater.dispatcher.add_handler(CommandHandler("subscribe", handlers.subscribe_command))
 
-    updater.dispatcher.add_handler(CallbackQueryHandler(handlers.handle_button_click, pattern='rrrrrr'))
-    updater.dispatcher.add_handler(CommandHandler("start2", handlers.start2))
+    updater.dispatcher.add_handler(CallbackQueryHandler(handlers.show_phone_handler, pattern=r"^show_phone_"))
 
-    updater.dispatcher.add_handler(CallbackQueryHandler(handlers.button, pattern='button'))
+    updater.dispatcher.add_handler(CallbackQueryHandler(handlers.process_request_handler, pattern='^processed_'))
 
-    # Start the Bot
+
     updater.start_polling()
 
     updater.idle()

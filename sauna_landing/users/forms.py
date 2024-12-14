@@ -13,7 +13,7 @@ class CallbackRequestForm(forms.ModelForm):
 
     class Meta:
         model = CallbackRequest
-        exclude = ["user"]
+        exclude = ["user", 'state', 'attempts']
         widgets = {
             "name": forms.TextInput(
                 attrs={"class": "form-control", "placeholder": "Ваше имя"}
