@@ -12,8 +12,7 @@ def callback_request_view(request):
         if form.is_valid():
             back_call = form.save()
             name = form.cleaned_data.get("name")
-            phone = form.cleaned_data.get("phone_number")
-            send_notifications.delay(back_call.id, phone, name)
+            send_notifications.delay(back_call.id, name)
             return JsonResponse({"status": "success", "message": "Ваш запрос принят"})
         else:
             return JsonResponse({"status": "error", "errors": form.errors})

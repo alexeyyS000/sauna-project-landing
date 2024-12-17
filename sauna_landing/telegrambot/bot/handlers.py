@@ -8,11 +8,11 @@ from users.models import CallbackRequest
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CallbackContext
 import structlog
-
+from telegram import ReplyKeyboardRemove
 logger = structlog.get_logger("telegram_bot")
 
 
-def start_command(update: Update, context: CallbackContext) -> None:
+def start_command(update: Update, context: CallbackContext) -> None:#TODO in middleware add persistant
     """Handle the /start command."""
     user = update.effective_user
     telegram_id = user.id
@@ -78,14 +78,11 @@ def process_request_handler(update: Update, context: CallbackContext):
     if callback_request.state != CallbackRequest.State.COMPLETED:
         callback_request.state = CallbackRequest.State.COMPLETED
         callback_request.save()
-        new_keyboard = InlineKeyboardMarkup(
-            [
-                [],
-            ]
-        )
+
         query.edit_message_text(text="Заявка успешно обработана.", reply_markup=None)
     else:
-        query.edit_message_text(text="Заявка уже была завершена.")
+        query.edit_message_text(text="Заявка уже была завершена.", reply_markup=None)
+
 
 
 def show_phone_handler(update: Update, context: CallbackContext):

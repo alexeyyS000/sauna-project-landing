@@ -1,15 +1,11 @@
-from django.conf import settings
 from telegram.ext import Updater
 from celery import shared_task
 from django.contrib.auth import get_user_model
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from dependency_injector.wiring import inject, Provide
-from telegrambot.container import BotContainer
+from telegrambot.container import WorkerContainer
 UserModel = get_user_model()
 
-container = BotContainer()
-container.config.telegrambot_key.from_value(settings.TELEGRAMBOT_KEY)
-container.wire(modules=[__name__, ])
 
 @shared_task(
     name="send_notification",
@@ -20,9 +16,8 @@ container.wire(modules=[__name__, ])
 def send_notification(
     admin_tg_id: int,
     callback_request_id: int,
-    user_phone_number: str,
     user_first_name: str,
-    updater: Updater = Provide[BotContainer.updater],
+    bot: Updater = Provide[WorkerContainer.bot],
 ):
 
     message = f"Пользователь {user_first_name} запросил обратный звонок."
@@ -30,14 +25,13 @@ def send_notification(
         [
             [
                 InlineKeyboardButton(
-                    "📞 Показать номер телефона", callback_data=f"show_phone_{callback_request_id}"
+                    "📞 Показать номер телефона", callback_data=f"show_phone_{callback_request_id}"#регулярка
                 )
             ],
 
         ]
     )
-    updater = Updater(token = settings.TELEGRAMBOT_KEY)
-    updater.bot.send_message(chat_id=admin_tg_id, text=message, reply_markup=keyboard)
+    bot.send_message(chat_id=admin_tg_id, text=message, reply_markup=keyboard)
 
 
 
@@ -46,7 +40,7 @@ def send_notification(
     autoretry_for=(Exception,),
     retry_kwargs={"max_retries": 3, "countdown": 5},
 )
-def send_notifications(callback_request_id, user_phone_number, user_first_name) -> None:
+def send_notifications(callback_request_id, user_first_name) -> None:
     admins = UserModel.objects.filter(
         telegram_id__isnull=False, is_active_tg_alerting=True
     )
@@ -54,6 +48,5 @@ def send_notifications(callback_request_id, user_phone_number, user_first_name) 
         send_notification.delay(
             admin_tg_id=admin.telegram_id,
             callback_request_id=callback_request_id,
-            user_phone_number=user_phone_number,
             user_first_name=user_first_name,
         )
