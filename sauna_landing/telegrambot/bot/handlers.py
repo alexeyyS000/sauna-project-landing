@@ -1,14 +1,11 @@
 from django.contrib.auth import get_user_model
-
 from telegrambot.utils.template import render_template
-
 UserModel = get_user_model()
 from django.shortcuts import get_object_or_404
 from users.models import CallbackRequest
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CallbackContext
 import structlog
-from telegram import ReplyKeyboardRemove
 logger = structlog.get_logger("telegram_bot")
 
 
@@ -19,15 +16,13 @@ def start_command(update: Update, context: CallbackContext) -> None:#TODO in mid
 
     logger.info("Received /start command", user_tg_id=telegram_id)
 
-    user = UserModel.objects.filter(telegram_id=telegram_id).first()
-    if user:
+    user = context.chat_data['user']
+    if user.is_active_tg_alerting is False:
         user.is_active_tg_alerting = True
         user.save()
-        update.message.reply_text(
+    update.message.reply_text(
             "Теперь вы получаете уведомления об обратных звонках. Нажмите /unsubscribe чтобы перестать получать сообщения"
         )
-    else:
-        update.message.reply_text("Вас еще нет в базе.")
 
 
 def unsubscribe_command(update: Update, context: CallbackContext) -> None:
@@ -37,30 +32,12 @@ def unsubscribe_command(update: Update, context: CallbackContext) -> None:
 
     logger.info("Received /unsubscribe command", user_tg_id=telegram_id)
 
-    user = UserModel.objects.filter(telegram_id=telegram_id).first()
+    user = context.chat_data['user']
     if user:
         user.is_active_tg_alerting = False
         user.save()
         update.message.reply_text(
-            "Теперь вы не получаете уведомления об обратных звонках. Нажмите /subscribe чтобы начать получать сообщения"
-        )
-    else:
-        update.message.reply_text("Вас еще нет в базе.")
-
-
-def subscribe_command(update: Update, context: CallbackContext) -> None:
-    """Handle the /subscribe command."""
-    tg_user = update.effective_user
-    telegram_id = tg_user.id
-
-    logger.info("Received /subscribe command", user_tg_id=telegram_id)
-
-    user = UserModel.objects.filter(telegram_id=telegram_id).first()
-    if user:
-        user.is_active_tg_alerting = True
-        user.save()
-        update.message.reply_text(
-            "Теперь вы получаете уведомления об обратных звонках. Нажмите /unsubscribe чтобы перестать получать сообщения"
+            "Теперь вы не получаете уведомления об обратных звонках. Нажмите /start чтобы начать получать сообщения"
         )
     else:
         update.message.reply_text("Вас еще нет в базе.")
@@ -110,3 +87,20 @@ def show_phone_handler(update: Update, context: CallbackContext):
         query.edit_message_text(text=message, reply_markup=new_keyboard)
     else:
         query.edit_message_text(text="Эта заявка уже в обработке или обработана.")
+
+
+def get_user(
+    update: Update,
+    context: CallbackContext,
+) -> None:
+    """
+    Get or create user.
+    """
+    current_user = update.effective_user
+    chat_data = context.chat_data
+
+    user = UserModel.objects.filter(telegram_id=current_user.id).first()
+    if user:
+        chat_data["user"] = user
+    else:
+        update.message.reply_text("Вас еще нет в базе.")
