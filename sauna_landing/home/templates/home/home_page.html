@@ -225,6 +225,48 @@
   text-align: center; /* Центровка текста */
 }
 
+
+
+  /* Общие стили для секции акций */
+#promotions {
+  background-color: #f9fafc;
+  padding: 2rem 0;
+}
+
+/* Карточки акций */
+#promotions .card {
+  border-radius: 8px;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+#promotions .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* Заголовок карточки */
+#promotions .card-title {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+/* Описание акции */
+#promotions .card-text {
+  color: #6c757d;
+  font-size: 0.95rem;
+}
+
+/* Кнопка "Подробнее" */
+#promotions .btn-outline-primary {
+  color: #007bff;
+  border-color: #007bff;
+}
+
+#promotions .btn-outline-primary:hover {
+  background-color: #007bff;
+  color: #fff;
+}
+
 </style>
 
 {% endblock extra_css %}
@@ -232,12 +274,6 @@
 {% block content %}
 
 <div class="carousel-overlay">
-  <div class="top-row">
-    <p class="address">{{ page.address }}</p>
-    <div class="logo">
-      <img src="{% static 'images/logo_surgut.png' %}" alt="Логотип Сургут">
-    </div>
-  </div>
   <nav class="nav-links">
     {% for department in page.departments %}
     <a href="#{{ department.id }}">{{ department.value.title }}</a>
@@ -370,41 +406,24 @@
 
 
 {%if page.promotions.all%}
-<div id="promotions" class="content-block" style="background-image: url('{% static 'images/sauna1.jpg' %}'); background-size: cover; padding: 40px 20px;">
-  <div class="container text-center text-light">
-    <h2>Акции и скидки</h2>
-    <p>Специальные предложения для наших гостей.</p>
-
-
-    <div id="promotionsCarousel" class="carousel slide" data-bs-ride="carousel">
-      <div class="carousel-inner">
-        {% for promotion in page.promotions.all %}
-          <div class="carousel-item {% if forloop.first %}active{% endif %}">
-            <div class="row d-flex justify-content-center align-items-center">
-              <div class="col-md-4">
-                <div class="promotion-card p-3 text-center" >
-                  {% if promotion.image %}
-                    <img src="{{ promotion.image.file.url }}" class="img-fluid mb-3" alt="{{ promotion.title }}" style="border-radius: 5px;">
-                  {% endif %}
-                  <h5>{{ promotion.title }}</h5>
-                  <p>{{ promotion.description|richtext }}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        {% endfor %}
+<div id="promotions" class="content-block mt-5">
+  <h2 class="text-center mb-4">Наши акции</h2>
+  <p class="text-center text-muted mb-5">Успейте воспользоваться специальными предложениями и скидками.</p>
+  <div class="row g-4">
+    <!-- Акция 1 -->
+    {% for promotion in page.promotions.all %}
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-body text-center">
+          <h5 class="card-title text-uppercase text-primary">{{ promotion.title }}</h5>
+          <p class="card-text">{{ promotion.description|richtext }}</p>
+        </div>
       </div>
-
-
-      <button class="carousel-control-prev" type="button" data-bs-target="#promotionsCarousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#promotionsCarousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-      </button>
     </div>
+    {% endfor %}
+  </div>
+  <div class="text-center mt-4">
+    <a href="{% url 'search' %}" class="btn btn-primary px-4">Узнать больше</a>
   </div>
 </div>
 {%endif%}
@@ -422,7 +441,7 @@
         </h2>
         <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse {% if forloop.first %}show{% endif %}" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#faqAccordion">
           <div class="accordion-body">
-            {{ faq.answer|richtext }}
+            {{ faq.answer|richtext|striptags }}
           </div>
         </div>
       </div>
