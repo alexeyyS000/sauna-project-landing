@@ -24,7 +24,6 @@ emoji = "^2.14.0"
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
 pytest-django = "^4.9.0"
-django-test-migrations = "^1.4.0"
 
 [build-system]
 requires = ["poetry-core"]

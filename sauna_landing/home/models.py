@@ -117,19 +117,10 @@ class Promotion(Orderable):
     page = ParentalKey("HomePage", on_delete=models.CASCADE, related_name="promotions")
     title = models.CharField(max_length=255, verbose_name="Название", null=True)
     description = RichTextField(blank=True, verbose_name="Описание", null=True)
-    image = models.ForeignKey(
-        "wagtailimages.Image",
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        related_name="+",
-        verbose_name="Изображение",
-    )
 
     panels = [
         FieldPanel("title"),
         FieldPanel("description"),
-        FieldPanel("image"),
     ]
 
     def __str__(self):
@@ -160,10 +151,8 @@ class HomePage(Page):
         FieldPanel("address"),
         InlinePanel("services", label="Услуги"),
         InlinePanel("faqs", label="Вопросы и ответы"),
-        InlinePanel("carousel_images", label="Изображения карусели"),  # model_admin
+        InlinePanel("carousel_images", label="Изображения карусели"),
         FieldPanel("departments"),
         InlinePanel("promotions", label="Акции"),
     ]
 
-
-# TODO сделать динамический адрес через админку шрифт свести к одному названия на русском в админке влидацию в админке на цену на картинки акций итд и валидация блока с контактами  https://yandex.ru/dev/jsapi30/doc/ru/examples/cases/marker-popup    https://getbootstrap.com/docs/5.3/components/modal/

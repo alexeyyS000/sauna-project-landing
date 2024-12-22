@@ -7,9 +7,9 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CallbackContext
 import structlog
 logger = structlog.get_logger("telegram_bot")
+from django.template.loader import render_to_string
 
-
-def start_command(update: Update, context: CallbackContext) -> None:#TODO in middleware add persistant
+def start_command(update: Update, context: CallbackContext) -> None:
     """Handle the /start command."""
     user = update.effective_user
     telegram_id = user.id
@@ -20,10 +20,11 @@ def start_command(update: Update, context: CallbackContext) -> None:#TODO in mid
     if user.is_active_tg_alerting is False:
         user.is_active_tg_alerting = True
         user.save()
+    message_html = render_to_string('start_message.html', )
     update.message.reply_text(
-            "Теперь вы получаете уведомления об обратных звонках. Нажмите /unsubscribe чтобы перестать получать сообщения"
-        )
-
+        message_html,
+        parse_mode='HTML'
+    )
 
 def unsubscribe_command(update: Update, context: CallbackContext) -> None:
     """Handle the /unsubscribe command."""
@@ -36,8 +37,10 @@ def unsubscribe_command(update: Update, context: CallbackContext) -> None:
     if user:
         user.is_active_tg_alerting = False
         user.save()
+        message_html = render_to_string('unsubscribe_message.html', )
         update.message.reply_text(
-            "Теперь вы не получаете уведомления об обратных звонках. Нажмите /start чтобы начать получать сообщения"
+            message_html,
+            parse_mode='HTML'
         )
     else:
         update.message.reply_text("Вас еще нет в базе.")
@@ -99,7 +102,7 @@ def get_user(
     current_user = update.effective_user
     chat_data = context.chat_data
 
-    user = UserModel.objects.filter(telegram_id=current_user.id).first()
+    user = UserModel.objects.filter(telegram_id=current_user.id).first()#get_or_create
     if user:
         chat_data["user"] = user
     else:
