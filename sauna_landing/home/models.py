@@ -5,7 +5,6 @@ from modelcluster.fields import ParentalKey
 
 from wagtail import blocks
 from wagtail.images.blocks import ImageChooserBlock
-from wagtail.blocks import StreamBlock
 
 from wagtail.admin.panels import FieldPanel
 from django.db import models
@@ -56,33 +55,6 @@ class CarouselImage(Orderable):
         return self.image.title
 
 
-class Service(Orderable):
-    page = ParentalKey("HomePage", on_delete=models.CASCADE, related_name="services")
-    name = models.CharField(max_length=255, verbose_name="Название", null=False)
-    description = RichTextField(
-        blank=True,
-        verbose_name="Описание",
-        null=True,
-    )
-    price = models.DecimalField(
-        max_digits=6,
-        decimal_places=0,
-        null=False,
-        verbose_name="Цена",
-        validators=[
-            MinValueValidator(100),
-            MaxValueValidator(100000),
-        ],
-    )
-
-    panels = [
-        FieldPanel("name"),
-        FieldPanel("description"),
-        FieldPanel("price"),
-    ]
-
-    def __str__(self):
-        return self.name
 
 
 class FAQ(Orderable):
@@ -99,13 +71,31 @@ class FAQ(Orderable):
         return self.question
 
 
+class PriceItemBlock(StructBlock):
+    name = blocks.CharBlock(required=True, label="Услуга")
+    price = blocks.DecimalBlock(    required=True,
+    label="Цена",
+    max_digits=6,
+    decimal_places=0,
+    min_value=100,
+    max_value=100000,)
+    description = blocks.RichTextBlock(required=False, label="Описание")
+
+    class Meta:
+        icon = "tag"
+
 class DepartmentBlock(StructBlock):
     title = blocks.CharBlock(required=True, max_length=60, label="Название отделения")
     description = RichTextBlock(required=False, verbose_name="Описание отделения")
-    images = StreamBlock(
+    images = blocks.StreamBlock(
         [("image", ImageChooserBlock(required=True))],
         verbose_name="Фотографии",
         required=False,
+    )
+    pricelist = blocks.ListBlock(
+        PriceItemBlock(),
+        required=False,
+        label="Прайскурант",
     )
 
     class Meta:
@@ -149,7 +139,6 @@ class HomePage(Page):
         FieldPanel("body"),
         FieldPanel("description"),
         FieldPanel("address"),
-        InlinePanel("services", label="Услуги"),
         InlinePanel("faqs", label="Вопросы и ответы"),
         InlinePanel("carousel_images", label="Изображения карусели"),
         FieldPanel("departments"),

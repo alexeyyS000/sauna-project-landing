@@ -17,61 +17,61 @@ from dotenv import load_dotenv
 
 import structlog
 
-
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "json": {
-            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
-        },
-        "structlog": {
-            "()": "structlog.stdlib.ProcessorFormatter",
-            "processor": structlog.dev.ConsoleRenderer(),
-            "foreign_pre_chain": [
-                structlog.stdlib.add_logger_name,
-                structlog.stdlib.add_log_level,
-                structlog.processors.TimeStamper(fmt="iso"),
-            ],
-        },
-    },
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-            "formatter": "structlog",
-        },
-        "file": {
-            "class": "logging.FileHandler",
-            "filename": "django_and_bot.log",
-            "formatter": "json",
-        },
-        "django_request_handler": {
-            "class": "logging.StreamHandler",
-            "formatter": "json",
-        },
-    },
-    "loggers": {
-        "django": {
-            "handlers": ["console", "file"],
-            "level": "INFO",
-            "propagate": False,
-        },
-        "django.server": {
-            "handlers": ["django_request_handler"],
-            "level": "INFO",
-            "propagate": False,
-        },
-        "telegram_bot": {
-            "handlers": ["console", "file"],
-            "level": "INFO",
-            "propagate": False,
-        },
-        "": {
-            "handlers": ["console", "file"],
-            "level": "INFO",
-        },
-    },
-}
+#
+# LOGGING = {
+#     "version": 1,
+#     "disable_existing_loggers": False,
+#     "formatters": {
+#         "json": {
+#             "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
+#         },
+#         "structlog": {
+#             "()": "structlog.stdlib.ProcessorFormatter",
+#             "processor": structlog.dev.ConsoleRenderer(),
+#             "foreign_pre_chain": [
+#                 structlog.stdlib.add_logger_name,
+#                 structlog.stdlib.add_log_level,
+#                 structlog.processors.TimeStamper(fmt="iso"),
+#             ],
+#         },
+#     },
+#     "handlers": {
+#         "console": {
+#             "class": "logging.StreamHandler",
+#             "formatter": "structlog",
+#         },
+#         "file": {
+#             "class": "logging.FileHandler",
+#             "filename": "django_and_bot.log",
+#             "formatter": "json",
+#         },
+#         "django_request_handler": {
+#             "class": "logging.StreamHandler",
+#             "formatter": "json",
+#         },
+#     },
+#     "loggers": {
+#         "django": {
+#             "handlers": ["console", "file"],
+#             "level": "INFO",
+#             "propagate": False,
+#         },
+#         "django.server": {
+#             "handlers": ["django_request_handler"],
+#             "level": "INFO",
+#             "propagate": False,
+#         },
+#         "telegram_bot": {
+#             "handlers": ["console", "file"],
+#             "level": "INFO",
+#             "propagate": False,
+#         },
+#         "": {
+#             "handlers": ["console", "file"],
+#             "level": "INFO",
+#         },
+#     },
+# }
 
 structlog.configure(
     processors=[
@@ -152,6 +152,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -292,3 +293,5 @@ AUTH_USER_MODEL = "users.User"
 REDIS_BOT_HOST = os.environ.get("REDIS_BOT_HOST")
 REDIS_BOT_PORT = os.environ.get("REDIS_BOT_PORT")
 REDIS_BOT_PASSWORD = os.environ.get("REDIS_BOT_PASSWORD")
+
+WAGTAILIMAGES_MAX_UPLOAD_SIZE = 50 * 1024 * 1024  # 50 MB

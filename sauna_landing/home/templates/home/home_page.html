@@ -10,301 +10,370 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
 <style>
-  /* Глобальные стили */
+  /* --- Responsive, improved styles --- */
+  :root{
+    --brand-brown: #8B4513;
+    --brand-brown-dark: #A0522D;
+    --muted: #6c757d;
+    --glass: rgba(255,255,255,0.85);
+  }
+
+  html,body{height:100%;}
   body {
     font-family: 'Open Sans', sans-serif;
     color: #333;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    background-color: #fff;
   }
 
-  /* Логотип и навигация */
-  .carousel-overlay {
-    position: absolute;
+  /* Overlay header on top of carousel. Switches to compact bar on small screens */
+  .carousel-overlay{
+    position: fixed;
     top: 0;
     left: 0;
+    right: 0;
+    z-index: 1030;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.55), rgba(0,0,0,0.15));
+    padding: 10px 16px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    align-items:center;
+    backdrop-filter: blur(3px);
+    pointer-events: none;
+  }
+
+  .carousel-overlay > *{
+    pointer-events: auto;
+  }
+
+  .carousel-overlay .top-row{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+
+  .carousel-overlay .logo img{height:50px;}
+
+  .carousel-overlay .address{
+    font-size:14px;
+    color:#fff;
+    padding:6px 10px;
+    border-radius:10px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.12);
+  }
+
+  .carousel-overlay .nav-links{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    padding-bottom:6px;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  .carousel-overlay .nav-links a{
+    color:#fff;
+    background-color: rgba(255,140,0,0.85);
+    padding:7px 12px;
+    border-radius:20px;
+    font-weight:600;
+    text-decoration:none;
+    white-space:nowrap;
+    font-size:13px;
+    box-shadow:0 3px 8px rgba(0,0,0,0.12);
+  }
+
+  .carousel-overlay .nav-links a:hover{background-color:var(--brand-brown-dark);color:#fff}
+
+  /* Page content offset for fixed overlay */
+  .content-offset{padding-top:110px;} /* ensures content not hidden under fixed overlay */
+
+  /* Headings and text */
+  .container h1{color:var(--brand-brown);font-weight:700;margin-bottom:14px;font-size:2.25rem;text-align:center}
+  .container p{font-size:1.05rem;color:#555;text-align:center}
+
+  /* Carousel sizing: use viewport units for consistent behavior */
+  .carousel-item{position:relative;min-height:40vh}
+  .carousel-item img{height:60vh;object-fit:cover;display:block;width:100%;filter:brightness(0.75)}
+
+  /* On smaller screens reduce carousel height */
+  @media (max-width: 768px){
+    .carousel-item img{height:40vh}
+    .carousel-overlay .logo img{height:40px}
+    .container h1{font-size:1.6rem}
+    .content-offset{padding-top:20px;} /* Убираем отступ так как хедер скрыт */
+  }
+
+  @media (max-width: 420px){
+    .carousel-item img{height:34vh}
+    .carousel-overlay .nav-links a{padding:6px 10px;font-size:12px}
+    .carousel-overlay .address{display:none}
+    .content-offset{padding-top:20px;}
+  }
+
+  /* Overlay custom HTML centering */
+  .custom-html-overlay{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:10;color:#fff;text-align:center;padding:0 12px}
+  .custom-html-overlay *{max-width:min(90vw,900px)}
+
+  /* Content blocks */
+  .content-block{margin-top:28px;padding:20px;background:var(--glass);border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,0.06)}
+  .content-block h2{color:var(--brand-brown);font-size:1.5rem}
+
+  /* Image grid responsive */
+  .image-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .image-item img{width:100%;height:220px;object-fit:cover;border-radius:8px}
+
+  /* Promotions cards */
+  #promotions .card{border-radius:8px;transition:transform .25s,box-shadow .25s}
+  #promotions .card:hover{transform:translateY(-6px);box-shadow:0 10px 30px rgba(0,0,0,0.12)}
+
+  /* Callback icon: move to bottom-right on small screens and scale down */
+  .callback-icon{position:fixed;bottom:22px;right:22px;z-index:1100;background-color:var(--brand-brown);color:#fff;border-radius:50%;width:56px;height:56px;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 6px 14px rgba(0,0,0,0.18);text-decoration:none}
+  .callback-icon:hover{background-color:var(--brand-brown-dark);color:#fff}
+
+  @media (min-width: 1200px){
+    .callback-icon{left:20px;right:auto;top:20px;bottom:auto}
+  }
+
+  /* Map container responsive height */
+  .map-container{height:400px}
+  @media (max-width:768px){.map-container{height:260px}}
+
+  /* Table improvements */
+  .table th,.table td{vertical-align:middle}
+
+  /* Small helpers */
+  .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;border:0!important}
+
+  /* ========== IMPROVED BURGER MENU ========== */
+
+  /* Animated burger button */
+  .mobile-menu-button {
+    display: none;
+    background: rgba(139, 69, 19, 0.9); /* Коричневый фон для контраста */
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    width: 52px;
+    height: 52px;
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    z-index: 9999;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    pointer-events: auto !important;
+    touch-action: manipulation;
+  }
+
+  .mobile-menu-button:hover {
+    background: rgba(160, 82, 45, 0.95);
+    transform: scale(1.05);
+  }
+
+  .mobile-menu-button:active {
+    transform: scale(0.95);
+  }
+
+  /* Animated burger icon (3 lines) with better visibility */
+  .burger-icon {
+    position: relative;
+    width: 26px;
+    height: 20px;
+    margin: auto;
+    pointer-events: none;
+  }
+
+  .burger-icon span {
+    position: absolute;
+    left: 0;
     width: 100%;
-    z-index: 10;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(139, 69, 19, 0.3));
-    padding: 15px;
+    height: 3px;
+    background: #fff;
+    border-radius: 3px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3); /* Тень для лучшей видимости */
+  }
+
+  .burger-icon span:nth-child(1) {
+    top: 0;
+  }
+
+  .burger-icon span:nth-child(2) {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .burger-icon span:nth-child(3) {
+    bottom: 0;
+  }
+
+  /* Transform to X when menu is open */
+  .mobile-menu-button.active .burger-icon span:nth-child(1) {
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+  }
+
+  .mobile-menu-button.active .burger-icon span:nth-child(2) {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+
+  .mobile-menu-button.active .burger-icon span:nth-child(3) {
+    bottom: 50%;
+    transform: translateY(50%) rotate(-45deg);
+  }
+
+  /* Fullscreen mobile menu with improved design */
+  .mobile-fullscreen-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(139, 69, 19, 0.97) 0%, rgba(160, 82, 45, 0.95) 100%);
+    z-index: 9998;
+    padding: 80px 28px 28px;
+    color: #fff;
+    overflow: auto;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .mobile-fullscreen-menu.active {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* Navigation container */
+  .mobile-fullscreen-menu nav {
     display: flex;
     flex-direction: column;
-    align-items: center;
-  }
-
-  .carousel-overlay .top-row {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    align-items: center;
-  }
-
-  .carousel-overlay .logo img {
-    height: 60px;
-    filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.5));
-  }
-
-  .carousel-overlay .address {
-    font-size: 16px;
-    color: #ffffff;
-    padding: 8px 12px;
-    border: 2px solid rgba(255, 255, 255, 0.7);
-    border-radius: 12px;
-    background-color: rgba(255, 255, 255, 0.3);
-  }
-
-  /* Навигационные ссылки */
-  .carousel-overlay .nav-links {
-    display: flex;
-    gap: 15px;
+    gap: 0;
+    align-items: stretch;
     justify-content: center;
-    margin-top: 10px;
-    flex-wrap: wrap;
+    min-height: calc(100vh - 160px);
+    max-width: 500px;
+    margin: 0 auto;
   }
 
-  .carousel-overlay .nav-links a {
+  /* Menu links with stagger animation */
+  .mobile-fullscreen-menu a {
     color: #fff;
-    background-color: rgba(255, 140, 0, 0.8);
-    padding: 8px 15px;
-    border-radius: 30px;
-    font-weight: bold;
     text-decoration: none;
-    transition: all 0.3s ease;
-    font-size: 14px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-
-  .carousel-overlay .nav-links a:hover {
-    background-color: #A0522D;
-    color: #FFF0E0;
-  }
-
-
-
-  .container p {
-    font-size: 18px;
-    color: #555;
-    text-align: center;
-  }
-
-  /* Основной заголовок и кнопки */
-  .container h1 {
-    color: #8B4513;
-    font-weight: 700;
-    font-family: 'Open Sans', serif;
-    margin-bottom: 20px;
-    font-size: 36px;
-    text-align: center;
-  }
-
-
-
-  .container .btn {
-    font-weight: bold;
-    border-radius: 25px;
-    padding: 10px 20px;
-    margin: 5px;
-  }
-
-  /* Контентные блоки */
-  .content-block {
-    margin-top: 40px;
-    padding: 25px;
-    border: none;
-    background: rgba(255, 255, 255, 0.95);
-    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
-    border-radius: 12px;
-  }
-
-  .content-block h2 {
-    color: #8B4513;
-    font-family: 'Open Sans', serif;
-    font-size: 28px;
-  }
-
-  .content-block p {
-    color: #555;
-    font-size: 16px;
-  }
-
-  /* Таблица прейскуранта */
-  .table {
-    border-radius: 8px;
-    overflow: hidden;
-  }
-
-  .table thead {
-    background-color: #8B4513;
-    color: #fff;
-    font-size: 16px;
-  }
-
-  /* Блоки FAQ */
-  .accordion-item .accordion-header button {
+    font-size: 22px;
     font-weight: 600;
-    color: #8B4513;
-  }
-
-  /* Контакты */
-  .contact-info {
-    padding: 25px;
-    background: #f5f5f5;
-    border-radius: 12px;
-    color: #333;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  .contact-info h4 {
-    font-weight: bold;
-    color: #8B4513;
-  }
-
-  /* Иконки и ссылки */
-  .contact-info a {
-    color: #A0522D;
-  }
-
-  .contact-info a:hover {
-    text-decoration: underline;
-  }
-
-  /* Карта */
-  .map-container {
-    border-radius: 8px;
+    padding: 18px 24px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.08);
+    margin-bottom: 12px;
+    position: relative;
     overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transform: translateX(50px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  .btn-secondary {
-    background-color: #8B4513;
-    color: #fff;
-    font-weight: bold;
-    border-radius: 20px;
+  /* Stagger animation for menu items */
+  .mobile-fullscreen-menu.active a {
+    opacity: 1;
+    transform: translateX(0);
   }
 
-  .btn-secondary:hover {
-    background-color: #A0522D;
-    color: #FFF0E0;
+  .mobile-fullscreen-menu.active a:nth-child(1) { transition-delay: 0.1s; }
+  .mobile-fullscreen-menu.active a:nth-child(2) { transition-delay: 0.15s; }
+  .mobile-fullscreen-menu.active a:nth-child(3) { transition-delay: 0.2s; }
+  .mobile-fullscreen-menu.active a:nth-child(4) { transition-delay: 0.25s; }
+  .mobile-fullscreen-menu.active a:nth-child(5) { transition-delay: 0.3s; }
+  .mobile-fullscreen-menu.active a:nth-child(6) { transition-delay: 0.35s; }
+
+  /* Hover effect with gradient */
+  .mobile-fullscreen-menu a::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.6s;
   }
 
-  .carousel-caption {
-    color: white;
-    font-size: 18px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Тень для текста */
-    text-align: center;
-    font-weight: bold;
-    transform: translate(-50%, -50%); /* Центрируем по оси X и Y */
+  .mobile-fullscreen-menu a:hover::before {
+    transform: translateX(100%);
   }
 
+  .mobile-fullscreen-menu a:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateX(8px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  }
 
-  .overlay-image {
-    width: 100px;
-    height: auto;
-    top: 10%;
-    left: 10%;
-    z-index: 20;
-}
+  .mobile-fullscreen-menu a:active {
+    transform: scale(0.98) translateX(8px);
+  }
 
+  /* Decorative elements */
+  .mobile-fullscreen-menu::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
 
-.carousel-item {
-  position: relative; /* Родительский элемент для текста */
-}
+  .mobile-fullscreen-menu::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -10%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
 
+  /* Make nav-links hidden on small screens and show burger */
+  @media (max-width: 768px){
+    /* СКРЫВАЕМ хедер на мобильных устройствах */
+    .carousel-overlay{display:none !important;}
 
-.carousel-item img {
-  max-height: 600px;
-  object-fit: cover;
-  filter: brightness(80%);
-  display: block; /* Убираем возможные баги с inline-изображениями */
-  width: 100%; /* Изображение всегда занимает всю ширину */
-}
+    .mobile-menu-button{display:flex; align-items: center; justify-content: center;}
+  }
 
-.custom-html-overlay {
-  position: absolute;
-  top: 50%; /* По центру по вертикали */
-  left: 50%; /* По центру по горизонтали */
-  transform: translate(-50%, -50%);
-  z-index: 10; /* Поверх изображения */
-  color: white; /* Белый текст по умолчанию */
-  text-align: center; /* Центровка текста */
-}
+  /* Ensure carousel controls are clickable above overlay */
+  .carousel-control-prev,
+  .carousel-control-next{z-index:1050}
 
+  /* Image grid: show 3 columns on small screens and nicer cards */
+  .image-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+  .image-item{cursor:pointer;overflow:hidden;border-radius:8px}
+  .image-item img{width:100%;height:140px;object-fit:cover;display:block;transition:transform .25s}
+  .image-item:hover img{transform:scale(1.04)}
 
+  @media (max-width:480px){
+    .image-grid{grid-template-columns:repeat(3,1fr);gap:8px}
+    .image-item img{height:100px}
+  }
 
-  /* Общие стили для секции акций */
-#promotions {
-  background-color: #f9fafc;
-  padding: 2rem 0;
-}
-
-/* Карточки акций */
-#promotions .card {
-  border-radius: 8px;
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-}
-
-#promotions .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-}
-
-/* Заголовок карточки */
-#promotions .card-title {
-  color: #2c3e50;
-  margin-bottom: 0.5rem;
-}
-
-/* Описание акции */
-#promotions .card-text {
-  color: #6c757d;
-  font-size: 0.95rem;
-}
-
-/* Кнопка "Подробнее" */
-#promotions .btn-outline-primary {
-  color: #007bff;
-  border-color: #007bff;
-}
-
-#promotions .btn-outline-primary:hover {
-  background-color: #007bff;
-  color: #fff;
-}
-.image-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Автоматическое заполнение колонок */
-  gap: 15px; /* Одинаковые отступы между изображениями */
-}
-
-.image-item img {
-  width: 100%;
-  height: 300px; /* Фиксированная высота для изображений */
-  object-fit: cover; /* Обрезка и сохранение пропорций */
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-/* Иконка обратного звонка */
-.callback-icon {
-  position: fixed;
-  top: 20px; /* Отступ сверху */
-  left: 20px; /* Отступ слева */
-  z-index: 1000; /* Поверх других элементов */
-  background-color: #8B4513; /* Цвет фона */
-  color: #fff; /* Цвет иконки */
-  border-radius: 50%; /* Круглая форма */
-  width: 50px; /* Размер кнопки */
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px; /* Размер иконки */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-}
-
-.callback-icon:hover {
-  background-color: #A0522D;
-  color: #FFF0E0;
-}
+  /* Lightbox styles */
+  .image-lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:3000;align-items:center;justify-content:center}
+  .image-lightbox img{max-width:100%;max-height:100%;object-fit:contain}
+  .image-lightbox .close{position:absolute;top:18px;right:18px;background:transparent;border:0;color:#fff;font-size:26px}
+  .image-lightbox .nav{position:absolute;top:50%;transform:translateY(-50%);color:#fff;font-size:32px;background:transparent;border:0}
+  .image-lightbox .prev{left:14px}
+  .image-lightbox .next{right:14px}
 
 </style>
 
@@ -313,14 +382,30 @@
 {% block content %}
 
 <div class="carousel-overlay">
+  <div class="logo">{% if page.logo %}<img src="{{ page.logo.file.url }}" alt="logo">{% endif %}</div>
   <nav class="nav-links">
     {% for department in page.departments %}
     <a href="#{{ department.id }}">{{ department.value.title }}</a>
     {% endfor %}
-    <a href="#pricing">Прейскурант</a>
     {%if page.promotions.all%}<a href="#promotions">Акции</a>{%endif%}
     <a href="#faq">Вопрос—ответ</a>
     <a href="#contacts">Карта и контакты</a>
+  </nav>
+</div>
+
+<!-- Burger button ВЫНЕСЕНА ИЗ overlay -->
+<button class="mobile-menu-button" id="mobileMenuBtn" aria-label="Открыть меню">
+  <div class="burger-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</button>
+
+<!-- Fullscreen mobile menu -->
+<div id="mobileFullMenu" class="mobile-fullscreen-menu" aria-hidden="true">
+  <nav id="mobileMenuNav" aria-label="Мобильное меню">
+    <!-- will be cloned by JS -->
   </nav>
 </div>
 
@@ -330,7 +415,7 @@
 <div class="carousel-item {% if forloop.first %}active{% endif %}">
   <div style="position: relative;">
 
-    <img src="{{ carousel_image.image.file.url }}" class="d-block w-100 img-fluid" alt="{{ carousel_image.image.title }}">
+    <img src="{{ carousel_image.image.file.url }}" class="d-block w-100 img-fluid" alt="{{ carousel_image.image.title }}" loading="lazy" decoding="async">
 
     {% for block in carousel_image.custom_content %}
       <div class="custom-html-overlay" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; color: white;">
@@ -355,7 +440,7 @@
 
 
 
-<div class="container mt-5">
+<div class="container mt-5 content-offset">
   <h1>{{ page.body|richtext }}</h1>
   <p>{{ page.description|richtext }}</p>
 
@@ -388,14 +473,13 @@
 </div>
 
 
-
-<a href="#" class="callback-icon" data-bs-toggle="modal" data-bs-target="#callbackModal">
-  <i class="bi bi-telephone-fill"></i>
+<a href="#" class="callback-icon" data-bs-toggle="modal" data-bs-target="#callbackModal" role="button" aria-label="Обратный звонок">
+  <i class="bi bi-telephone-fill" aria-hidden="true"></i>
 </a>
 
 </div>
 
-<div class="container">
+<div class="container content-offset">
 
     {% for department in page.departments %}
     <div id = "{{department.id}}" class="content-block">
@@ -406,21 +490,16 @@
       <div class="image-grid">
         {% for image_block in department.value.images %}
           <div class="image-item">
-            <img src="{{ image_block.value.file.url }}" alt="Изображение отделения" class="img-fluid rounded shadow">
+            <img src="{{ image_block.value.file.url }}" alt="Изображение отделения" class="img-fluid rounded shadow" loading="lazy" decoding="async">
           </div>
         {% endfor %}
       </div>
 
           <div class="text-center mt-3">
-      <a href="{% url 'search' %}" class="btn btn-primary">Онлайн запись</a>
     </div>
-
-    </div>
-  {% endfor %}
-
-
-<div id="pricing" class="content-block">
-    <h2>Прейскурант и режим работы</h2>
+{% if department.value.pricelist %}
+  <div id="pricing" class="content-block">
+    <h3>Прейскурант и режим работы</h3>
     <p class="text-danger">Запрещено приносить: еду, напитки, веники.</p>
 
     <div class="table-responsive">
@@ -433,11 +512,11 @@
                 </tr>
             </thead>
             <tbody>
-                {% for service in page.services.all %}
+                 {% for item in department.value.pricelist %}
                 <tr>
-                    <td>{{ service.name|richtext|striptags}}</td>
-                    <td>{{ service.description|richtext|striptags }}</td>
-                    <td>{{ service.price}} ₽</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.description|richtext }}</td>
+                    <td>{{ item.price }}₽</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -445,7 +524,9 @@
     </div>
 
 </div>
-
+{% endif %}
+    </div>
+  {% endfor %}
 
 {%if page.promotions.all%}
 <div id="promotions" class="content-block mt-5">
@@ -477,7 +558,7 @@
     {% for faq in page.faqs.all %}
       <div class="accordion-item">
         <h2 class="accordion-header" id="heading{{ forloop.counter }}">
-          <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="{{ forloop.first }}" aria-controls="collapse{{ forloop.counter }}">
+          <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-controls="collapse{{ forloop.counter }}">
             {{ faq.question }}
           </button>
         </h2>
@@ -490,7 +571,6 @@
     {% endfor %}
   </div>
 </div>
-
 
 
 
@@ -515,12 +595,23 @@
 
     <div class="col-lg-7 col-md-6">
       <div class="map-container" style="height: 400px; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
-        <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3Aba017b4efda0b7fe9983591ecb7d78f609eb0ebde0ec91a17a87b91fb229ef88&amp;source=constructor" frameborder="0" allowfullscreen="true" width="100%" height="100%"></iframe>
+        <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3Aba017b4efda0b7fe9983591ecb7d78f609eb0ebde0ec91a17a87b91fb229ef88&amp;source=constructor" frameborder="0" allowfullscreen width="100%" height="100%" loading="lazy"></iframe>
       </div>
     </div>
   </div>
 </div>
 
+
+<!-- Lightbox element -->
+<div id="imageLightbox" class="image-lightbox" role="dialog" aria-modal="true" aria-hidden="true">
+  <button class="close" id="lightboxClose" aria-label="Закрыть">&times;</button>
+  <button class="nav prev" id="lightboxPrev" aria-label="Предыдущее">&#10094;</button>
+  <img id="lightboxImg" src="" alt="">
+  <button class="nav next" id="lightboxNext" aria-label="Следующее">&#10095;</button>
+</div>
+
+<!-- close main container -->
+</div>
 
 {% endblock content %}
 
@@ -528,32 +619,196 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+// Enhance callback form submission with fetch and graceful error handling
 document.addEventListener("DOMContentLoaded", function() {
   const form = document.getElementById("callbackForm");
+  if (form) {
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
 
-  form.addEventListener("submit", function(event) {
-    event.preventDefault();
+      const formData = new FormData(form);
+      fetch("{% url 'callback_request' %}", {
+        method: "POST",
+        headers: {
+          "X-CSRFToken": "{{ csrf_token }}",
+        },
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === "success") {
+          const submitBtn = form.querySelector('button[type="submit"]');
+          submitBtn.textContent = 'Отправлено';
+          setTimeout(()=>{ submitBtn.textContent = 'Отправить'; form.reset(); const modal = bootstrap.Modal.getInstance(document.getElementById("callbackModal")); if(modal) modal.hide(); }, 1200);
+        } else if (data.status === "error" && data.errors) {
+          alert("Ошибка: Проверьте введенные данные");
+        }
+      })
+      .catch(error => {
+        console.error("Ошибка:", error);
+        alert('Не удалось отправить запрос. Попробуйте позже.');
+      });
+    });
+  }
 
-    const formData = new FormData(form);
-    fetch("{% url 'callback_request' %}", {
-      method: "POST",
-      headers: {
-        "X-CSRFToken": "{{ csrf_token }}",
-      },
-      body: formData
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.status === "success") {
-        alert(data.message);
-        form.reset();
-        const modal = bootstrap.Modal.getInstance(document.getElementById("callbackModal"));
-        modal.hide();
-      } else if (data.status === "error" && data.errors) {
-        alert("Ошибка: Проверьте введенные данные");
+  // ========== IMPROVED MOBILE MENU TOGGLE ==========
+  (function(){
+    const openBtn = document.getElementById('mobileMenuBtn');
+    const fullMenu = document.getElementById('mobileFullMenu');
+    const mobileNav = document.getElementById('mobileMenuNav');
+    const sourceNav = document.querySelector('.carousel-overlay .nav-links');
+
+    if(openBtn && fullMenu && sourceNav){
+      // Clone links into mobile nav
+      mobileNav.innerHTML = sourceNav.innerHTML;
+
+      const pageCarousel = document.querySelector('#carouselExampleControls');
+
+      function toggleMenu(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
+        // Проверяем, открыто ли меню
+        const isOpen = fullMenu.classList.contains('active');
+
+        if (isOpen) {
+          // Закрываем меню
+          closeMenu();
+        } else {
+          // Открываем меню
+          openMenu();
+        }
       }
-    })
-    .catch(error => console.error("Ошибка:", error));
+
+      function openMenu() {
+        console.log('Opening menu');
+
+        fullMenu.style.display = 'flex';
+        fullMenu.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+
+        setTimeout(() => {
+          fullMenu.classList.add('active');
+          openBtn.classList.add('active');
+        }, 10);
+
+        if(pageCarousel) pageCarousel.style.pointerEvents = 'none';
+      }
+
+      function closeMenu(e) {
+        if(e) {
+          e.stopPropagation();
+          e.preventDefault();
+        }
+
+        console.log('Closing menu');
+
+        fullMenu.classList.remove('active');
+        openBtn.classList.remove('active');
+
+        setTimeout(() => {
+          fullMenu.style.display = 'none';
+          fullMenu.setAttribute('aria-hidden', 'true');
+          document.body.style.overflow = '';
+        }, 400);
+
+        if(pageCarousel) pageCarousel.style.pointerEvents = '';
+      }
+
+      // Toggle menu on burger button click (работает и для открытия, и для закрытия)
+      openBtn.addEventListener('click', toggleMenu, {capture: true});
+      openBtn.addEventListener('touchstart', toggleMenu, {passive: false, capture: true});
+      openBtn.addEventListener('touchend', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+      }, {passive: false, capture: true});
+
+      // Close on link click
+      mobileNav.addEventListener('click', (e) => {
+        if(e.target.tagName === 'A') {
+          closeMenu();
+        }
+      });
+
+      // Close on background click
+      fullMenu.addEventListener('click', (e) => {
+        if(e.target === fullMenu) {
+          closeMenu();
+        }
+      });
+
+      // Close on ESC key
+      document.addEventListener('keydown', (e) => {
+        if(e.key === 'Escape' && fullMenu.classList.contains('active')) {
+          closeMenu();
+        }
+      });
+    }
+  })();
+
+  // Image lightbox
+  (function(){
+    const items = document.querySelectorAll('.image-item img');
+    const lightbox = document.getElementById('imageLightbox');
+    const lbImg = document.getElementById('lightboxImg');
+    const close = document.getElementById('lightboxClose');
+    const next = document.getElementById('lightboxNext');
+    const prev = document.getElementById('lightboxPrev');
+    let currentIndex = -1;
+    const srcs = Array.from(items).map(i=>i.src);
+    function open(index){ currentIndex=index; lbImg.src=srcs[currentIndex]; lightbox.style.display='flex'; lightbox.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; }
+    function closeLB(){ lightbox.style.display='none'; lightbox.setAttribute('aria-hidden','true'); document.body.style.overflow=''; }
+    function nextImg(){ if(currentIndex < srcs.length-1) open(currentIndex+1); }
+    function prevImg(){ if(currentIndex > 0) open(currentIndex-1); }
+    items.forEach((img,idx)=> img.addEventListener('click', ()=> open(idx)));
+    if(close) close.addEventListener('click', closeLB);
+    if(next) next.addEventListener('click', nextImg);
+    if(prev) prev.addEventListener('click', prevImg);
+    lightbox.addEventListener('click', (e)=>{ if(e.target===lightbox) closeLB(); });
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeLB(); if(e.key==='ArrowRight') nextImg(); if(e.key==='ArrowLeft') prevImg(); });
+  })();
+
+  // Ensure carousel controls clickable: also add touch support
+  (function(){
+    const carouselEl = document.querySelector('#carouselExampleControls');
+    if (carouselEl) {
+      let touchStartX = null;
+      carouselEl.addEventListener('touchstart', function(e){
+        if(!e.target.closest('.mobile-menu-button')){
+          touchStartX = e.changedTouches[0].clientX;
+        }
+      }, {passive:true});
+
+      carouselEl.addEventListener('touchend', function(e){
+        if(touchStartX === null) return;
+        if(e.target.closest('.mobile-menu-button')) return;
+
+        const diff = touchStartX - e.changedTouches[0].clientX;
+        if(Math.abs(diff) > 40){
+          const bsCarousel = bootstrap.Carousel.getInstance(carouselEl) || new bootstrap.Carousel(carouselEl);
+          if (diff > 0) bsCarousel.next(); else bsCarousel.prev();
+        }
+        touchStartX = null;
+      });
+
+      const prevBtn = carouselEl.querySelector('.carousel-control-prev');
+      const nextBtn = carouselEl.querySelector('.carousel-control-next');
+      if(prevBtn) prevBtn.style.zIndex = 1050;
+      if(nextBtn) nextBtn.style.zIndex = 1050;
+    }
+  })();
+
+  // Ensure accordion buttons have correct aria-expanded
+  const accordionItems = document.querySelectorAll('#faqAccordion .accordion-item');
+  accordionItems.forEach(item => {
+    const btn = item.querySelector('.accordion-button');
+    const collapse = item.querySelector('.accordion-collapse');
+    if (!btn || !collapse) return;
+    btn.setAttribute('aria-expanded', collapse.classList.contains('show') ? 'true' : 'false');
+    collapse.addEventListener('shown.bs.collapse', () => btn.setAttribute('aria-expanded','true'));
+    collapse.addEventListener('hidden.bs.collapse', () => btn.setAttribute('aria-expanded','false'));
   });
 });
 </script>

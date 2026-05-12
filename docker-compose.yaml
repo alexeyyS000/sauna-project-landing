@@ -69,4 +69,4 @@ services:
 volumes:
   postgres-data:
 
-  
+  #TODO прейскурант и режим работы под каждым отделением
