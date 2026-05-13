@@ -1,7 +1,7 @@
 {% load static wagtailcore_tags wagtailuserbar %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
     <head>
         <meta charset="utf-8" />
         <title>
@@ -10,7 +10,7 @@
             {% endblock %}
             {% block title_suffix %}
             {% wagtail_site as current_site %}
-            {% if current_site and current_site.site_name %}- {{ current_site.site_name }}{% endif %}
+            {% if current_site and current_site.site_name %} - {{ current_site.site_name }}{% endif %}
             {% endblock %}
         </title>
         {% if page.search_description %}
@@ -22,6 +22,9 @@
         {% if request.in_preview_panel %}
         <base target="_blank">
         {% endif %}
+
+        {# Favicon #}
+        <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
 
         {# Global stylesheets #}
         <link rel="stylesheet" type="text/css" href="{% static 'css/sauna_landing.css' %}">
@@ -35,7 +38,9 @@
         {% wagtailuserbar %}
 
         {% block content %}{% endblock %}
+
         {% include "includes/footer.html" %}
+
         {# Global javascript #}
         <script type="text/javascript" src="{% static 'js/sauna_landing.js' %}"></script>
 
