@@ -9,7 +9,6 @@ from wagtail.images.blocks import ImageChooserBlock
 from wagtail.admin.panels import FieldPanel
 from django.db import models
 from wagtail.models import Page
-from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 from wagtail.blocks import (
@@ -87,6 +86,7 @@ class PriceItemBlock(StructBlock):
 class DepartmentBlock(StructBlock):
     title = blocks.CharBlock(required=True, max_length=60, label="Название отделения")
     description = RichTextBlock(required=False, verbose_name="Описание отделения")
+    disabled = blocks.BooleanBlock(required=False, label="Отключить отделение", default=False)
     images = blocks.StreamBlock(
         [("image", ImageChooserBlock(required=True))],
         verbose_name="Фотографии",
