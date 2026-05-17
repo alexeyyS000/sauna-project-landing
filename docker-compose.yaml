@@ -8,8 +8,8 @@ services:
       - .env
     depends_on:
       - postgres
-      - redis
-      
+    volumes:
+      - ./sauna_landing/media:/app/media
 
   postgres:
     restart: always
@@ -18,7 +18,6 @@ services:
       - postgres-data:/var/lib/postgresql/data
     env_file:
       - .env
-
 
   nginx:
     build:
@@ -30,41 +29,19 @@ services:
       - app
     env_file:
       - .env
-  
-  redis:
-    restart: always
-    image: redis:7.0-alpine
+    volumes:
+      - ./sauna_landing/media:/app/media:ro
 
-
-  telegrambot:
-    restart: always
-    build: .
-    command: bash -c "python3 -m telegrambot.bot"
-    env_file:
-      - .env
-    depends_on:
-      - postgres
-      - redis
-
-  worker:
-    restart: always
-    build: .
-    command: celery -A sauna_landing worker -l INFO
-    env_file:
-      - .env
-    depends_on:
-      - app
-
-  migrations:
-    build: .
-    command: bash -c "python3 manage.py migrate"
-    env_file:
-      - .env
-    depends_on:
-      - postgres
-    restart: "no"
-    profiles:
-      - migrate
+#  migrations:
+#    build: .
+#    command: bash -c "python3 manage.py migrate"
+#    env_file:
+#      - .env
+#    depends_on:
+#      - postgres
+#    restart: "no"
+#    profiles:
+#      - migrate
 
 volumes:
   postgres-data:
