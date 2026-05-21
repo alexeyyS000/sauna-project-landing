@@ -216,7 +216,7 @@
     display: none;
   }
 
-  /* ИСПРАВЛЕНИЕ #1: Центровка стрелок карусели на мобильных */
+  /* ИСПРАВЛЕНИЕ: Стрелки карусели для мобильных */
   .carousel-control-prev,
   .carousel-control-next {
     z-index: 1050;
@@ -225,7 +225,7 @@
   @media (max-width: 768px) {
     .carousel-control-prev,
     .carousel-control-next {
-      top: 50% !important;
+      top: 40% !important;
       transform: translateY(-50%);
     }
   }
@@ -245,13 +245,6 @@
   .custom-html-overlay * {
     max-width: min(90vw, 900px);
   }
-
-  /* ========== ЗАГОЛОВКИ И ТЕКСТ ========== */
-  .container h1 {
-    color: var(--wood-dark);
-    font-weight: 700;
-    margin-bottom: 20px;
-    font-size: 3rem;
     text-align: center;
     position: relative;
     padding-bottom: 15px;
@@ -998,7 +991,7 @@
 
 <!-- Основной контент -->
 <div class="container mt-5 content-offset">
-  <h1>{{ page.body|richtext }}</h1>
+  <h1 style="text-align: center;">{{ page.body|richtext }}</h1>
   <p>{{ page.description|richtext }}</p>
 
   <!-- Модальное окно обратного звонка -->

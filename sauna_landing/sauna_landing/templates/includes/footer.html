@@ -7,16 +7,18 @@
     }
 
     footer a {
-        color: #000;
-        text-decoration: none;
+        color: #D4A574;
+        text-decoration: underline;
+        font-weight: 600;
+        transition: color 0.3s ease;
     }
 
     footer a:hover {
+        color: #FFB74D;
         text-decoration: underline;
     }
-
-
 </style>
+
 {% with phone=settings.base.NavigationSettings.phone %}
 <footer class="mt-5">
     <div class="container">
@@ -38,7 +40,6 @@
         </div>
         <div class="text-center mt-3">
             <p>{% get_footer_text %}</p>
-
         </div>
     </div>
 </footer>
