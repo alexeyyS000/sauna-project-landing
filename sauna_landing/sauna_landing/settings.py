@@ -61,11 +61,6 @@ import structlog
 #             "level": "INFO",
 #             "propagate": False,
 #         },
-#         "telegram_bot": {
-#             "handlers": ["console", "file"],
-#             "level": "INFO",
-#             "propagate": False,
-#         },
 #         "": {
 #             "handlers": ["console", "file"],
 #             "level": "INFO",
@@ -91,7 +86,6 @@ PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = os.path.dirname(PROJECT_DIR)
 ROOT_DIR = Path(BASE_DIR) / ".."
 env_local_path = ROOT_DIR / ".env.local"
-TG_TEMPLATE_DIR = Path(BASE_DIR) / "telegrambot" / "templates"
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 if env_local_path.exists():
@@ -114,7 +108,6 @@ DEBUG = True
 
 CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
 CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND")
-TELEGRAMBOT_KEY = os.environ.get("TELEGRAMBOT_KEY")
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-x8gl*us_cb8eq*aujzb^l-r&db7x4##7y4ibi@8gv1zjmjf**3"
 
@@ -147,8 +140,6 @@ INSTALLED_APPS = [
     "home",
     "search",
     "base",
-    "telegrambot.apps.TelegrambotConfig",
-    "users.apps.UsersConfig",
 ]
 
 MIDDLEWARE = [
@@ -288,10 +279,5 @@ WAGTAILDOCS_EXTENSIONS = [
     "xlsx",
     "zip",
 ]
-AUTH_USER_MODEL = "users.User"
-
-REDIS_BOT_HOST = os.environ.get("REDIS_BOT_HOST")
-REDIS_BOT_PORT = os.environ.get("REDIS_BOT_PORT")
-REDIS_BOT_PASSWORD = os.environ.get("REDIS_BOT_PASSWORD")
 
 WAGTAILIMAGES_MAX_UPLOAD_SIZE = 50 * 1024 * 1024  # 50 MB

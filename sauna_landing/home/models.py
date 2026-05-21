@@ -92,6 +92,19 @@ class DepartmentBlock(StructBlock):
         verbose_name="Фотографии",
         required=False,
     )
+    # Режим работы: список записей (день недели + описание/часы)
+    working_hours = blocks.ListBlock(
+        StructBlock(
+            [
+                ("day", blocks.CharBlock(required=True, max_length=20, label="День недели")),
+                ("info", blocks.CharBlock(required=False, max_length=30, label="Описание / часы")),
+            ],
+            label="День режима работы",
+            icon="time",
+        ),
+        required=False,
+        label="Режим работы",
+    )
     pricelist = blocks.ListBlock(
         PriceItemBlock(),
         required=False,
@@ -117,6 +130,17 @@ class Promotion(Orderable):
         return self.title
 
 
+# New Phone model: stores a phone number and its label/name and links to HomePage
+class Phone(Orderable):
+    page = ParentalKey("HomePage", on_delete=models.CASCADE, related_name="phones")
+    title = models.CharField(max_length=255, blank=True, null=True, verbose_name="Название")
+    number = models.CharField(max_length=50, verbose_name="Номер телефона")
+
+    panels = [
+        FieldPanel("title"),
+        FieldPanel("number"),
+    ]
+
 class HomePage(Page):
 
     body = models.CharField(
@@ -138,10 +162,11 @@ class HomePage(Page):
     content_panels = Page.content_panels + [
         FieldPanel("body"),
         FieldPanel("description"),
-        FieldPanel("address"),
-        InlinePanel("faqs", label="Вопросы и ответы"),
         InlinePanel("carousel_images", label="Изображения карусели"),
         FieldPanel("departments"),
+        FieldPanel("address"),
+        # InlinePanel for phones so editors can add multiple phone numbers per HomePage
         InlinePanel("promotions", label="Акции"),
+        InlinePanel("faqs", label="Вопросы и ответы"),
+        InlinePanel("phones", label="Телефоны"),
     ]
-
