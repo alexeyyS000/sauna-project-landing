@@ -2,6 +2,7 @@
 {% load static %}
 {% load custom_filters %}
 {% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
 {% block body_class %}template-homepage sauna-theme{% endblock %}
 
 {% block extra_css %}
@@ -1323,16 +1324,25 @@
     {% for carousel_image in page.carousel_images.all %}
       <div class="carousel-item {% if forloop.first %}active{% endif %}">
         <div style="position: relative;">
-          <img src="{{ carousel_image.image.file.url }}"
-               class="d-block w-100 img-fluid"
-               alt="{{ carousel_image.image.title }}"
-               {% if forloop.first %}fetchpriority="high"{% else %}loading="lazy"{% endif %}
-               decoding="async">
+
+          {% image carousel_image.image fill-1600x900 as img %}
+
+          <img
+            src="{{ img.url }}"
+            width="{{ img.width }}"
+            height="{{ img.height }}"
+            class="d-block w-100 img-fluid"
+            alt="{{ carousel_image.image.title }}"
+            {% if forloop.first %}fetchpriority="high"{% else %}loading="lazy"{% endif %}
+            decoding="async"
+          >
+
           {% for block in carousel_image.custom_content %}
             <div class="custom-html-overlay">
               {{ block.value.html|render_template:request|safe }}
             </div>
           {% endfor %}
+
         </div>
       </div>
     {% endfor %}
@@ -1361,13 +1371,23 @@
       <p>{{ department.value.description|richtext }}</p>
 
       <div class="image-grid">
+        {% load wagtailimages_tags %}
+
         {% for image_block in department.value.images %}
           <div class="image-item">
-            <img src="{{ image_block.value.file.url }}"
-                 alt="Изображение отделения"
-                 class="img-fluid"
-                 loading="lazy"
-                 decoding="async">
+
+            {% image image_block.value fill-1200x800 as img %}
+
+            <img
+              src="{{ img.url }}"
+              width="{{ img.width }}"
+              height="{{ img.height }}"
+              alt="Изображение отделения"
+              class="img-fluid"
+              loading="lazy"
+              decoding="async"
+            >
+
           </div>
         {% endfor %}
       </div>
