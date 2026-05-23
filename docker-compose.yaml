@@ -32,18 +32,5 @@ services:
     volumes:
       - ./sauna_landing/media:/app/media:ro
 
-#  migrations:
-#    build: .
-#    command: bash -c "python3 manage.py migrate"
-#    env_file:
-#      - .env
-#    depends_on:
-#      - postgres
-#    restart: "no"
-#    profiles:
-#      - migrate
-
 volumes:
   postgres-data:
-
-  #TODO прейскурант и режим работы под каждым отделением

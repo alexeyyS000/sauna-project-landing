@@ -623,6 +623,7 @@
   }
 
   #promotions .card-title {
+    font-size: 1.25rem;
     color: var(--wood-dark) !important;
     font-family: 'Playfair Display', serif;
     font-weight: 700;
@@ -1325,7 +1326,7 @@
           <img src="{{ carousel_image.image.file.url }}"
                class="d-block w-100 img-fluid"
                alt="{{ carousel_image.image.title }}"
-               loading="lazy"
+               {% if forloop.first %}fetchpriority="high"{% else %}loading="lazy"{% endif %}
                decoding="async">
           {% for block in carousel_image.custom_content %}
             <div class="custom-html-overlay">
@@ -1423,7 +1424,7 @@
           <div class="col-md-4">
             <div class="card h-100 shadow-sm border-0">
               <div class="card-body text-center">
-                <h5 class="card-title text-uppercase">{{ promotion.title }}</h5>
+                <h3 class="card-title text-uppercase">{{ promotion.title }}</h3>
                 <p class="card-text">{{ promotion.description|richtext }}</p>
               </div>
             </div>
@@ -1480,7 +1481,7 @@
 
       <div class="col-lg-7 col-md-6">
         <div class="map-container">
-          <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3Aba017b4efda0b7fe9983591ecb7d78f609eb0ebde0ec91a17a87b91fb229ef88&amp;source=constructor"
+          <iframe title="Карта с расположением бани" src="https://yandex.ru/map-widget/v1/?um=constructor%3Aba017b4efda0b7fe9983591ecb7d78f609eb0ebde0ec91a17a87b91fb229ef88&amp;source=constructor"
                   frameborder="0"
                   allowfullscreen
                   width="100%"
