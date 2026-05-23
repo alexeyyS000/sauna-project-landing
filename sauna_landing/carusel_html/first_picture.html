@@ -1,30 +1,30 @@
-{% load static %}
-<div>
-  <h1 style="font-family: 'Playfair Display', serif; font-size: clamp(1.5rem, 5vw, 3rem); font-weight: bold; margin-bottom: 20px; text-align: center; text-shadow: 0 3px 15px rgba(0, 0, 0, 0.7);">
-    БАНЯ НА БУЛЬВАРЕ
+<div class="overlay-text-block" style="max-width: 900px; margin: 0 auto; text-align: center;">
+  <h1 style="font-family: 'Playfair Display', serif; font-size: clamp(1.4rem, 5vw, 3rem); font-weight: bold; margin: 0 0 14px; text-align: center; line-height: 1.15; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.9), 0 4px 16px rgba(0,0,0,0.8), 0 0 30px rgba(0,0,0,0.6); display: inline-block; padding: 8px 18px; background: rgba(0,0,0,0.35); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border-radius: 10px;">
+    ПАРНАЯ. ОТДЫХ. ПЕРЕЗАГРУЗКА
   </h1>
-  <p style="font-size: clamp(0.9rem, 3vw, 1.2rem); line-height: 1.6; max-width: 800px; margin: 0 auto 30px; text-align: center; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);">
-    Общественная баня, Турецкий Хамам, Бассейн<br>
-    Мужской зал №1 (1 этаж) закрыт на летний период.<br>
-    Будем рады вас видеть 1 сентября!
+  <p style="font-size: clamp(0.9rem, 2.2vw, 1.25rem); line-height: 1.5; margin: 0 auto 24px; text-align: center; text-shadow: 0 2px 10px rgba(0,0,0,0.8); max-width: 720px; color: #fff; font-weight: 500;">
+    Общественная баня и сауна для тела и души —<br>
+    <span style="opacity: 0.95;">всё в одном банном комплексе.</span>
   </p>
 </div>
 
-<div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: clamp(10px, 3vw, 20px); margin-top: 20px; max-width: 100%;">
-  <div style="text-align: center; flex: 0 1 auto; min-width: 120px; max-width: 200px;">
-    <p style="font-size: clamp(0.85rem, 2vw, 1rem); margin-bottom: 10px; font-weight: 600; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);">Русская парная</p>
-    <img src="/static/images/side_pictures/side_picture1.png" alt="Русская парная" style="width: 100%; max-width: 200px; height: auto; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);">
+<div class="overlay-features" style="display: flex; flex-wrap: nowrap; justify-content: center; align-items: stretch; gap: clamp(8px, 2vw, 20px); width: 100%; max-width: 760px; margin: 0 auto;">
+  <div style="flex: 1 1 0; min-width: 0; max-width: 340px; text-align: center; padding: clamp(10px, 2.5vw, 22px) clamp(8px, 2vw, 18px) clamp(10px, 2vw, 18px); background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 14px; border: 1px solid rgba(255,255,255,0.2); position: relative;">
+    <div style="display: inline-flex; align-items: center; justify-content: center; width: clamp(28px, 6vw, 38px); height: clamp(28px, 6vw, 38px); border-radius: 50%; border: 1.5px solid rgba(212, 175, 55, 0.85); color: #d4af37; font-family: 'Playfair Display', serif; font-size: clamp(0.8rem, 2vw, 1.05rem); font-weight: 600; margin-bottom: clamp(6px, 1.5vw, 10px); letter-spacing: 1px;">I</div>
+    <div style="font-size: clamp(0.72rem, 2vw, 1.15rem); font-weight: 700; text-shadow: 0 2px 6px rgba(0,0,0,0.8); margin-bottom: 4px; letter-spacing: 0.8px;">ОБЩЕСТВЕННАЯ БАНЯ</div>
+    <div style="width: 28px; height: 1px; background: rgba(212, 175, 55, 0.7); margin: 0 auto 6px;"></div>
+    <div class="feature-desc" style="font-size: clamp(0.65rem, 1.5vw, 0.95rem); opacity: 0.92; text-shadow: 0 1px 4px rgba(0,0,0,0.7); line-height: 1.35;">Традиционная русская парная и Турецкий хамам</div>
   </div>
-  <div style="text-align: center; flex: 0 1 auto; min-width: 120px; max-width: 200px;">
-    <p style="font-size: clamp(0.85rem, 2vw, 1rem); margin-bottom: 10px; font-weight: 600; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);">Турецкий Хамам</p>
-    <img src="{% static 'images/side_pictures/side_picture2.png' %}" alt="Турецкий Хамам" style="width: 100%; max-width: 200px; height: auto; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);">
-  </div>
-  <div style="text-align: center; flex: 0 1 auto; min-width: 120px; max-width: 200px;">
-    <p style="font-size: clamp(0.85rem, 2vw, 1rem); margin-bottom: 10px; font-weight: 600; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);">Спа процедуры</p>
-    <img src="{% static 'images/side_pictures/side_picture3.png' %}" alt="Спа процедуры" style="width: 100%; max-width: 200px; height: auto; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);">
-  </div>
-  <div style="text-align: center; flex: 0 1 auto; min-width: 120px; max-width: 200px;">
-    <p style="font-size: clamp(0.85rem, 2vw, 1rem); margin-bottom: 10px; font-weight: 600; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);">Ресторанная еда</p>
-    <img src="{% static 'images/side_pictures/side_picture4.png' %}" alt="Ресторанная еда" style="width: 100%; max-width: 200px; height: auto; border-radius: 10px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);">
+  <div style="flex: 1 1 0; min-width: 0; max-width: 340px; text-align: center; padding: clamp(10px, 2.5vw, 22px) clamp(8px, 2vw, 18px) clamp(10px, 2vw, 18px); background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 14px; border: 1px solid rgba(255,255,255,0.2); position: relative;">
+    <div style="display: inline-flex; align-items: center; justify-content: center; width: clamp(28px, 6vw, 38px); height: clamp(28px, 6vw, 38px); border-radius: 50%; border: 1.5px solid rgba(212, 175, 55, 0.85); color: #d4af37; font-family: 'Playfair Display', serif; font-size: clamp(0.8rem, 2vw, 1.05rem); font-weight: 600; margin-bottom: clamp(6px, 1.5vw, 10px); letter-spacing: 1px;">II</div>
+    <div style="font-size: clamp(0.72rem, 2vw, 1.15rem); font-weight: 700; text-shadow: 0 2px 6px rgba(0,0,0,0.8); margin-bottom: 4px; letter-spacing: 0.8px;">ЧАСТНАЯ САУНА</div>
+    <div style="width: 28px; height: 1px; background: rgba(212, 175, 55, 0.7); margin: 0 auto 6px;"></div>
+    <div class="feature-desc" style="font-size: clamp(0.65rem, 1.5vw, 0.95rem); opacity: 0.92; text-shadow: 0 1px 4px rgba(0,0,0,0.7); line-height: 1.35;">Уединённый отдых для компании или семьи</div>
   </div>
 </div>
+
+<p style="font-size: clamp(0.8rem, 1.8vw, 1rem); margin: 20px auto 0; text-align: center; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,0.8); font-style: italic; opacity: 0.9; max-width: 600px; letter-spacing: 0.5px;">
+  <span style="display: inline-block; width: 30px; height: 1px; background: rgba(212, 175, 55, 0.8); vertical-align: middle; margin-right: 12px;"></span>
+  Один комплекс — два формата отдыха
+  <span style="display: inline-block; width: 30px; height: 1px; background: rgba(212, 175, 55, 0.8); vertical-align: middle; margin-left: 12px;"></span>
+</p>
