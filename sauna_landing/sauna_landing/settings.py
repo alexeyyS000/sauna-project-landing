@@ -140,6 +140,7 @@ INSTALLED_APPS = [
     "home",
     "search",
     "base",
+    "storages",
 ]
 
 MIDDLEWARE = [
@@ -235,7 +236,7 @@ MEDIA_URL = "/media/"
 # See https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-STORAGES
 STORAGES = {
     "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "BACKEND": "storages.backends.s3.S3Storage",
     },
     # ManifestStaticFilesStorage is recommended in production, to prevent
     # outdated JavaScript / CSS assets being served from cache
@@ -281,3 +282,27 @@ WAGTAILDOCS_EXTENSIONS = [
 ]
 
 WAGTAILIMAGES_MAX_UPLOAD_SIZE = 50 * 1024 * 1024  # 50 MB
+
+
+AWS_ACCESS_KEY_ID = "minioadmin"
+AWS_SECRET_ACCESS_KEY = "minioadminpassword"
+
+AWS_STORAGE_BUCKET_NAME = "media"
+
+AWS_S3_ENDPOINT_URL = "http://minio:9000"
+
+AWS_S3_REGION_NAME = "us-east-1"
+
+AWS_S3_ADDRESSING_STYLE = "path"
+
+AWS_QUERYSTRING_AUTH = False
+
+AWS_DEFAULT_ACL = None
+
+AWS_S3_FILE_OVERWRITE = False
+
+
+AWS_S3_CUSTOM_DOMAIN = "localhost:80"
+AWS_S3_USE_SSL = False
+AWS_LOCATION = "media"
+AWS_S3_URL_PROTOCOL = 'http:'
