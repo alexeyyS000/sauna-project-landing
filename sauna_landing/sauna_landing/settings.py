@@ -17,56 +17,50 @@ from dotenv import load_dotenv
 
 import structlog
 
-#
-# LOGGING = {
-#     "version": 1,
-#     "disable_existing_loggers": False,
-#     "formatters": {
-#         "json": {
-#             "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
-#         },
-#         "structlog": {
-#             "()": "structlog.stdlib.ProcessorFormatter",
-#             "processor": structlog.dev.ConsoleRenderer(),
-#             "foreign_pre_chain": [
-#                 structlog.stdlib.add_logger_name,
-#                 structlog.stdlib.add_log_level,
-#                 structlog.processors.TimeStamper(fmt="iso"),
-#             ],
-#         },
-#     },
-#     "handlers": {
-#         "console": {
-#             "class": "logging.StreamHandler",
-#             "formatter": "structlog",
-#         },
-#         "file": {
-#             "class": "logging.FileHandler",
-#             "filename": "django_and_bot.log",
-#             "formatter": "json",
-#         },
-#         "django_request_handler": {
-#             "class": "logging.StreamHandler",
-#             "formatter": "json",
-#         },
-#     },
-#     "loggers": {
-#         "django": {
-#             "handlers": ["console", "file"],
-#             "level": "INFO",
-#             "propagate": False,
-#         },
-#         "django.server": {
-#             "handlers": ["django_request_handler"],
-#             "level": "INFO",
-#             "propagate": False,
-#         },
-#         "": {
-#             "handlers": ["console", "file"],
-#             "level": "INFO",
-#         },
-#     },
-# }
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "json": {
+            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
+        },
+        "structlog": {
+            "()": "structlog.stdlib.ProcessorFormatter",
+            "processor": structlog.dev.ConsoleRenderer(),
+            "foreign_pre_chain": [
+                structlog.stdlib.add_logger_name,
+                structlog.stdlib.add_log_level,
+                structlog.processors.TimeStamper(fmt="iso"),
+            ],
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "structlog",
+        },
+        "django_request_handler": {
+            "class": "logging.StreamHandler",
+            "formatter": "json",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "django.server": {
+            "handlers": ["django_request_handler"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "": {
+            "handlers": ["console"],
+            "level": "INFO",
+        },
+    },
+}
 
 structlog.configure(
     processors=[
@@ -106,8 +100,6 @@ DATABASES = {
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
-CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND")
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-x8gl*us_cb8eq*aujzb^l-r&db7x4##7y4ibi@8gv1zjmjf**3"
 
@@ -302,7 +294,7 @@ AWS_DEFAULT_ACL = None
 AWS_S3_FILE_OVERWRITE = False
 
 
-AWS_S3_CUSTOM_DOMAIN = "localhost:80"
+AWS_S3_CUSTOM_DOMAIN = "localhost:80/media"
 AWS_S3_USE_SSL = False
-AWS_LOCATION = "media"
+AWS_LOCATION = ""
 AWS_S3_URL_PROTOCOL = 'http:'

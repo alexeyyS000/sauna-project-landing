@@ -19,5 +19,9 @@ RUN python manage.py collectstatic --noinput
 
 FROM nginx:1.19.2-alpine
 RUN rm /etc/nginx/conf.d/default.conf
-COPY nginx/nginx.conf /etc/nginx/conf.d
-COPY --from=build app/static /app/static
+
+RUN mkdir -p /var/cache/nginx
+
+COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
+
+COPY --from=build /app/static /app/static
