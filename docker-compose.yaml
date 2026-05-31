@@ -3,7 +3,7 @@ services:
   app:
     restart: unless-stopped
     build: .
-    command: bash -c "python3 manage.py runserver 0.0.0.0:8000"
+    command: gunicorn sauna_landing.wsgi:application --bind 0.0.0.0:8000 --workers 2
     env_file:
       - .env
     depends_on:
