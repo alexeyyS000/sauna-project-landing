@@ -1,0 +1,48 @@
+{% load navigation %}
+
+<style>
+    footer {
+        background-color: #f8f9fa;
+        padding: 20px 0;
+    }
+
+    footer a {
+        color: #8B6F47;
+        text-decoration: underline;
+        font-weight: 600;
+        transition: color 0.3s ease;
+    }
+
+    footer a:hover {
+        color: #6D4C41;
+        text-decoration: underline;
+    }
+</style>
+
+{% with phone=settings.base.NavigationSettings.phone %}
+<footer class="mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5>Контакты</h5>
+<!--                <p>Телефон: {{phone}}</p>-->
+                <p>Email: fantazia1@mail.ru</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Адрес</h5>
+                <p>{{page.address}}</p>
+            </div>
+            <div class="col-md-4">
+                <h5>Социальные сети</h5>
+                <a href="https://www.instagram.com/banya_na_bulvare">Instagram</a><br>
+                <a href="https://vk.com/banya_na_bulvare">VK</a><br>
+                <a href="#">MAX</a>
+            </div>
+        </div>
+        <div class="text-center mt-3">
+            <p>{% get_footer_text %}</p>
+        </div>
+    </div>
+</footer>
+
+{% endwith %}

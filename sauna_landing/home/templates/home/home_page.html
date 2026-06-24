@@ -1,0 +1,295 @@
+{% extends "base.html" %}
+{% load static %}
+{% load custom_filters %}
+{% load wagtailcore_tags %}
+{% load wagtailimages_tags %}
+{% block body_class %}template-homepage sauna-theme{% endblock %}
+
+{% block extra_css %}
+<!-- Шрифты для бани: элегантный заголовок + читаемый текст -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+<link rel="preload"
+      href="{% static 'css/homepage.css' %}"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'">
+
+<noscript>
+    <link rel="stylesheet" href="{% static 'css/homepage.css' %}">
+</noscript>
+
+{% endblock extra_css %}
+
+{% block content %}
+
+<!-- Навигация -->
+<div class="carousel-overlay">
+  <div class="logo">
+    {% if page.logo %}
+      <img src="{{ page.logo.file.url }}" alt="Логотип бани">
+    {% endif %}
+  </div>
+  <nav class="nav-links">
+    {% for department in page.departments %}
+      <a href="#{{ department.id }}">{{ department.value.title }}</a>
+    {% endfor %}
+    {% if page.promotions.all %}
+      <a href="#promotions">🔥 Акции</a>
+    {% endif %}
+    <a href="#faq">❓ Вопрос—ответ</a>
+    <a href="#contacts">📍 Контакты</a>
+  </nav>
+</div>
+
+<!-- Бургер-меню -->
+<button class="mobile-menu-button" id="mobileMenuBtn" aria-label="Открыть меню">
+  <div class="burger-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</button>
+
+<!-- Полноэкранное мобильное меню -->
+<div id="mobileFullMenu" class="mobile-fullscreen-menu" aria-hidden="true">
+  <nav id="mobileMenuNav" aria-label="Мобильное меню"></nav>
+</div>
+
+<!-- Карусель -->
+<div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+  <div class="carousel-inner">
+{% for carousel_image in page.carousel_images.all %}
+  <div class="carousel-item {% if forloop.first %}active{% endif %}">
+    <div style="position: relative;">
+
+      {# Desktop image #}
+      {% image carousel_image.image fill-1600x900 format-webp as desktop_img %}
+
+      {# Mobile image #}
+      {% image carousel_image.image fill-700x900 format-webp as mobile_img %}
+
+      <picture>
+
+        {# Mobile version #}
+        <source
+          media="(max-width: 768px)"
+          srcset="{{ mobile_img.url }}"
+        >
+
+        {# Desktop version #}
+        <img
+          src="{{ desktop_img.url }}"
+          width="{{ desktop_img.width }}"
+          height="{{ desktop_img.height }}"
+          class="d-block w-100 img-fluid"
+          alt="{{ carousel_image.image.title }}"
+
+          {% if forloop.first %}
+            fetchpriority="high"
+          {% else %}
+            loading="lazy"
+          {% endif %}
+
+          decoding="async"
+        >
+
+      </picture>
+
+      {% for block in carousel_image.custom_content %}
+        <div class="custom-html-overlay">
+          {{ block.value.html|render_template:request|safe }}
+        </div>
+      {% endfor %}
+
+    </div>
+  </div>
+{% endfor %}
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Предыдущий</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Следующий</span>
+  </button>
+</div>
+
+<!-- Основной контент -->
+<div class="container mt-3 mb-4">
+  <h1 style="text-align: center;">{{ page.body|richtext }}</h1>
+  <p>{{ page.description|richtext }}</p>
+</div>
+
+<!-- Секции отделений -->
+<div class="container">
+  {% for department in page.departments %}
+    <div id="{{ department.id }}" class="content-block">
+      <h2 class="text-center">{{ department.value.title }}</h2>
+      <p>{{ department.value.description|richtext }}</p>
+
+      <div class="image-grid">
+        {% load wagtailimages_tags %}
+
+        {% for image_block in department.value.images %}
+          <div class="image-item">
+
+            {% image image_block.value fill-1200x800 as img %}
+
+            <img
+              src="{{ img.url }}"
+              width="{{ img.width }}"
+              height="{{ img.height }}"
+              alt="Изображение отделения"
+              class="img-fluid"
+              loading="lazy"
+              decoding="async"
+            >
+
+          </div>
+        {% endfor %}
+      </div>
+
+      {% if department.value.pricelist %}
+        <div class="mt-4">
+          <h3>💰 Прейскурант и режим работы</h3>
+          {% if department.value.disabled %}
+          <p class="text-danger fw-bold text-center">⚠️ Зал временно закрыт.</p>
+          {% else %}
+            {% if department.value.working_hours %}
+            <div class="working-hours-list mb-3">
+              <ul class="list-unstyled">
+              {% for wh in department.value.working_hours %}
+                <li class="working-hours-item">
+                  <span class="day-label">{{ wh.day }}:</span>
+                  <span class="info-text">{{ wh.info }}</span>
+                </li>
+              {% endfor %}
+              </ul>
+            </div>
+            {% endif %}
+          <div class="table-responsive">
+            <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">Услуга</th>
+                  <th scope="col">Цена</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in department.value.pricelist %}
+                  <tr>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.price }}₽</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+
+  <!-- Акции -->
+  {% if page.promotions.all %}
+    <div id="promotions" class="content-block mt-5">
+      <h2 class="text-center mb-4">🔥 Наши горячие акции!</h2>
+      <p class="text-center text-muted mb-5">Успейте воспользоваться специальными предложениями и скидками.</p>
+      <div class="row g-4">
+        {% for promotion in page.promotions.all %}
+          <div class="col-md-4">
+            <div class="card h-100 shadow-sm border-0">
+              <div class="card-body text-center">
+                <h3 class="card-title text-uppercase">{{ promotion.title }}</h3>
+                <p class="card-text">{{ promotion.description|richtext }}</p>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  <!-- FAQ -->
+  <div id="faq" class="content-block">
+    <h2 class="text-center">❓ Вопрос—ответ</h2>
+    <div class="accordion mt-4" id="faqAccordion">
+      {% for faq in page.faqs.all %}
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+            <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapse{{ forloop.counter }}"
+                    aria-controls="collapse{{ forloop.counter }}">
+              {{ faq.question }}
+            </button>
+          </h2>
+          <div id="collapse{{ forloop.counter }}"
+               class="accordion-collapse collapse {% if forloop.first %}show{% endif %}"
+               aria-labelledby="heading{{ forloop.counter }}"
+               data-bs-parent="#faqAccordion">
+            <div class="accordion-body">
+              {{ faq.answer|richtext|striptags }}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Контакты -->
+  <div id="contacts" class="content-block">
+    <h2 class="text-center">📍 Карта и контакты</h2>
+    <div class="row mt-4">
+      <div class="col-lg-5 col-md-6 mb-4">
+        <div class="contact-info">
+          <h4>🏛️ Баня «На Бульваре»</h4>
+          <p class="mb-2"><i class="bi bi-geo-alt-fill me-2 text-warning"></i>{{ page.address }}</p>
+          <p class="mb-2">
+            <i class="bi bi-telephone-fill me-2 text-warning"></i>
+            {% for phone in page.phones.all %}
+                <a href="tel:{{ phone.number }}">{{ phone.number }}</a> {{ phone.title }}<br>
+            {% endfor %}
+          </p>
+        </div>
+      </div>
+
+      <div class="col-lg-7 col-md-6">
+        <div class="map-container">
+          <iframe title="Карта с расположением бани" src="https://yandex.ru/map-widget/v1/?um=constructor%3Aba017b4efda0b7fe9983591ecb7d78f609eb0ebde0ec91a17a87b91fb229ef88&amp;source=constructor"
+                  frameborder="0"
+                  allowfullscreen
+                  width="100%"
+                  height="100%"
+                  loading="lazy"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Lightbox для изображений (с Bootstrap Icons) -->
+<div id="imageLightbox" class="image-lightbox" role="dialog" aria-modal="true" aria-hidden="true">
+  <button class="close" id="lightboxClose" aria-label="Закрыть">
+    <i class="bi bi-x-lg"></i>
+  </button>
+  <button class="nav prev" id="lightboxPrev" aria-label="Предыдущее">
+    <i class="bi bi-chevron-left"></i>
+  </button>
+  <img id="lightboxImg" src="" alt="">
+  <button class="nav next" id="lightboxNext" aria-label="Следующее">
+    <i class="bi bi-chevron-right"></i>
+  </button>
+</div>
+
+{% endblock content %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/homepage.js' %}"></script>
+{% endblock extra_js %}
