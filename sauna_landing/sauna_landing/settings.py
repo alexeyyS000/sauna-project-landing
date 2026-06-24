@@ -17,56 +17,50 @@ from dotenv import load_dotenv
 
 import structlog
 
-#
-# LOGGING = {
-#     "version": 1,
-#     "disable_existing_loggers": False,
-#     "formatters": {
-#         "json": {
-#             "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
-#         },
-#         "structlog": {
-#             "()": "structlog.stdlib.ProcessorFormatter",
-#             "processor": structlog.dev.ConsoleRenderer(),
-#             "foreign_pre_chain": [
-#                 structlog.stdlib.add_logger_name,
-#                 structlog.stdlib.add_log_level,
-#                 structlog.processors.TimeStamper(fmt="iso"),
-#             ],
-#         },
-#     },
-#     "handlers": {
-#         "console": {
-#             "class": "logging.StreamHandler",
-#             "formatter": "structlog",
-#         },
-#         "file": {
-#             "class": "logging.FileHandler",
-#             "filename": "django_and_bot.log",
-#             "formatter": "json",
-#         },
-#         "django_request_handler": {
-#             "class": "logging.StreamHandler",
-#             "formatter": "json",
-#         },
-#     },
-#     "loggers": {
-#         "django": {
-#             "handlers": ["console", "file"],
-#             "level": "INFO",
-#             "propagate": False,
-#         },
-#         "django.server": {
-#             "handlers": ["django_request_handler"],
-#             "level": "INFO",
-#             "propagate": False,
-#         },
-#         "": {
-#             "handlers": ["console", "file"],
-#             "level": "INFO",
-#         },
-#     },
-# }
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "json": {
+            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
+        },
+        "structlog": {
+            "()": "structlog.stdlib.ProcessorFormatter",
+            "processor": structlog.dev.ConsoleRenderer(),
+            "foreign_pre_chain": [
+                structlog.stdlib.add_logger_name,
+                structlog.stdlib.add_log_level,
+                structlog.processors.TimeStamper(fmt="iso"),
+            ],
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "structlog",
+        },
+        "django_request_handler": {
+            "class": "logging.StreamHandler",
+            "formatter": "json",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "django.server": {
+            "handlers": ["django_request_handler"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "": {
+            "handlers": ["console"],
+            "level": "INFO",
+        },
+    },
+}
 
 structlog.configure(
     processors=[
@@ -106,8 +100,6 @@ DATABASES = {
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
-CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND")
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-x8gl*us_cb8eq*aujzb^l-r&db7x4##7y4ibi@8gv1zjmjf**3"
 
@@ -140,6 +132,7 @@ INSTALLED_APPS = [
     "home",
     "search",
     "base",
+    "storages",
 ]
 
 MIDDLEWARE = [
@@ -235,7 +228,7 @@ MEDIA_URL = "/media/"
 # See https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-STORAGES
 STORAGES = {
     "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "BACKEND": "storages.backends.s3.S3Storage",
     },
     # ManifestStaticFilesStorage is recommended in production, to prevent
     # outdated JavaScript / CSS assets being served from cache
@@ -281,3 +274,27 @@ WAGTAILDOCS_EXTENSIONS = [
 ]
 
 WAGTAILIMAGES_MAX_UPLOAD_SIZE = 50 * 1024 * 1024  # 50 MB
+
+
+AWS_ACCESS_KEY_ID = "minioadmin"
+AWS_SECRET_ACCESS_KEY = "minioadminpassword"
+
+AWS_STORAGE_BUCKET_NAME = "media"
+
+AWS_S3_ENDPOINT_URL = "http://minio:9000"
+
+AWS_S3_REGION_NAME = "us-east-1"
+
+AWS_S3_ADDRESSING_STYLE = "path"
+
+AWS_QUERYSTRING_AUTH = False
+
+AWS_DEFAULT_ACL = None
+
+AWS_S3_FILE_OVERWRITE = False
+
+
+AWS_S3_CUSTOM_DOMAIN = "localhost:80/media"
+AWS_S3_USE_SSL = False
+AWS_LOCATION = ""
+AWS_S3_URL_PROTOCOL = 'http:'

@@ -48,4 +48,8 @@ RUN chown wagtail:wagtail /app
 COPY --chown=wagtail:wagtail sauna_landing .
 
 
+RUN mkdir -p /app/static && chown wagtail:wagtail /app/static
+
+RUN python manage.py collectstatic --noinput
+
 USER wagtail
