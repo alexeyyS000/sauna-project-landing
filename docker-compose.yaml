@@ -1,39 +1,55 @@
-version: '3.9'
 services:
   app:
     restart: unless-stopped
-    build: .
-    command: gunicorn sauna_landing.wsgi:application --bind 0.0.0.0:8000 --workers 2
+    build:
+      context: .
+      target: app
     env_file:
       - .env
     depends_on:
-      - postgres
-      - minio
-      - migrate
+      migrate:
+        condition: service_completed_successfully
+    expose:
+      - "8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket; socket.create_connection(('127.0.0.1', 8000), 3).close()"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
 
   postgres:
     restart: unless-stopped
-    image: postgres:15.3-alpine
+    image: postgres:15-alpine
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      - ./backups/initial.sql:/docker-entrypoint-initdb.d/10-initial.sql:ro
     env_file:
       - .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
 
   nginx:
     restart: unless-stopped
     build:
       context: .
-      dockerfile: nginx/Dockerfile
+      target: nginx
     ports:
-      - 80:80
+      - "80:80"
     depends_on:
-      - app
-      - minio
-    env_file:
-      - .env
+      app:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   minio:
-    image: minio/minio:RELEASE.2025-04-22T22-12-26Z #minio/minio:RELEASE.2023-08-29T23-07-35Z
+    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
     restart: unless-stopped
     command: server /data --console-address ":9001"
     env_file:
@@ -41,15 +57,37 @@ services:
     volumes:
       - minio-data:/data
     ports:
-      - "9001:9001"
+      - "127.0.0.1:9001:9001"
 
-  migrate:
-    build: .
-    command: sh -c "python manage.py migrate && python manage.py createsuperuser --noinput || true"
+  minio-init:
+    image: minio/mc:RELEASE.2025-04-16T18-13-26Z
+    restart: "no"
     env_file:
       - .env
     depends_on:
-      - postgres
+      minio:
+        condition: service_started
+    entrypoint:
+      - /bin/sh
+      - -ec
+      - |
+        until mc alias set minio http://minio:9000 "$$MINIO_ROOT_USER" "$$MINIO_ROOT_PASSWORD" && mc ready minio; do sleep 2; done
+        mc mb --ignore-existing "minio/$${AWS_STORAGE_BUCKET_NAME:-media}"
+        mc anonymous set download "minio/$${AWS_STORAGE_BUCKET_NAME:-media}"
+
+  migrate:
+    build:
+      context: .
+      target: app
+    restart: "no"
+    command: sh -ec 'python manage.py migrate && python manage.py create_default_superuser'
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio-init:
+        condition: service_completed_successfully
 
 
 volumes:

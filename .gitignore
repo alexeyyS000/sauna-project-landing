@@ -5,6 +5,7 @@
 .env
 .env.local
 .venv
+/sauna_landing/static/
 ### Linux ###
 *~
 
@@ -264,3 +265,4 @@ $RECYCLE.BIN/
 .idea
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,linux,venv,dotenv,python
 mailpit-data
+/backups/

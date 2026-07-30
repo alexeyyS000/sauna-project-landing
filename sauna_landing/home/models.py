@@ -17,16 +17,14 @@ from wagtail.blocks import (
     RawHTMLBlock,
 )
 from wagtail.fields import StreamField
-from home.utils.witgets import CodeMirrorPanel
+
 
 class CustomContentBlock(StructBlock):
     html = RawHTMLBlock(required=False, label="HTML код")
 
-
     class Meta:
         label = "Кастомный блок контента"
-
-    panels = [FieldPanel("html", widget=CodeMirrorPanel)]
+        template = "home/blocks/custom_content.html"
 
 
 class CarouselImage(Orderable):
@@ -54,8 +52,6 @@ class CarouselImage(Orderable):
         return self.image.title
 
 
-
-
 class FAQ(Orderable):
     page = ParentalKey("HomePage", on_delete=models.CASCADE, related_name="faqs")
     question = models.CharField(max_length=255, verbose_name="Вопрос", null=False)
@@ -72,21 +68,26 @@ class FAQ(Orderable):
 
 class PriceItemBlock(StructBlock):
     name = blocks.CharBlock(required=True, label="Услуга")
-    price = blocks.DecimalBlock(    required=True,
-    label="Цена",
-    max_digits=6,
-    decimal_places=0,
-    min_value=100,
-    max_value=100000,)
+    price = blocks.DecimalBlock(
+        required=True,
+        label="Цена",
+        max_digits=6,
+        decimal_places=0,
+        min_value=100,
+        max_value=100000,
+    )
     description = blocks.RichTextBlock(required=False, label="Описание")
 
     class Meta:
         icon = "tag"
 
+
 class DepartmentBlock(StructBlock):
     title = blocks.CharBlock(required=True, max_length=60, label="Название отделения")
     description = RichTextBlock(required=False, verbose_name="Описание отделения")
-    disabled = blocks.BooleanBlock(required=False, label="Отключить отделение", default=False)
+    disabled = blocks.BooleanBlock(
+        required=False, label="Отключить отделение", default=False
+    )
     images = blocks.StreamBlock(
         [("image", ImageChooserBlock(required=True))],
         verbose_name="Фотографии",
@@ -96,8 +97,16 @@ class DepartmentBlock(StructBlock):
     working_hours = blocks.ListBlock(
         StructBlock(
             [
-                ("day", blocks.CharBlock(required=True, max_length=20, label="День недели")),
-                ("info", blocks.CharBlock(required=False, max_length=30, label="Описание / часы")),
+                (
+                    "day",
+                    blocks.CharBlock(required=True, max_length=20, label="День недели"),
+                ),
+                (
+                    "info",
+                    blocks.CharBlock(
+                        required=False, max_length=30, label="Описание / часы"
+                    ),
+                ),
             ],
             label="День режима работы",
             icon="time",
@@ -133,13 +142,16 @@ class Promotion(Orderable):
 # New Phone model: stores a phone number and its label/name and links to HomePage
 class Phone(Orderable):
     page = ParentalKey("HomePage", on_delete=models.CASCADE, related_name="phones")
-    title = models.CharField(max_length=255, blank=True, null=True, verbose_name="Название")
+    title = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name="Название"
+    )
     number = models.CharField(max_length=50, verbose_name="Номер телефона")
 
     panels = [
         FieldPanel("title"),
         FieldPanel("number"),
     ]
+
 
 class HomePage(Page):
 

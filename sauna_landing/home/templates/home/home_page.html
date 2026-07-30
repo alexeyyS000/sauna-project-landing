@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% load static %}
-{% load custom_filters %}
 {% load wagtailcore_tags %}
 {% load wagtailimages_tags %}
 {% block body_class %}template-homepage sauna-theme{% endblock %}
@@ -26,11 +25,6 @@
 
 <!-- Навигация -->
 <div class="carousel-overlay">
-  <div class="logo">
-    {% if page.logo %}
-      <img src="{{ page.logo.file.url }}" alt="Логотип бани">
-    {% endif %}
-  </div>
   <nav class="nav-links">
     {% for department in page.departments %}
       <a href="#{{ department.id }}">{{ department.value.title }}</a>
@@ -99,7 +93,7 @@
 
       {% for block in carousel_image.custom_content %}
         <div class="custom-html-overlay">
-          {{ block.value.html|render_template:request|safe }}
+          {% include_block block %}
         </div>
       {% endfor %}
 
@@ -119,8 +113,8 @@
 
 <!-- Основной контент -->
 <div class="container mt-3 mb-4">
-  <h1 style="text-align: center;">{{ page.body|richtext }}</h1>
-  <p>{{ page.description|richtext }}</p>
+  <h1 style="text-align: center;">{{ page.body }}</h1>
+  <div>{{ page.description|richtext }}</div>
 </div>
 
 <!-- Секции отделений -->
@@ -197,7 +191,7 @@
   <!-- Акции -->
   {% if page.promotions.all %}
     <div id="promotions" class="content-block mt-5">
-      <h2 class="text-center mb-4">🔥 Наши горячие акции!</h2>
+      <h2 class="text-center mb-4">🔥 Наши акции!</h2>
       <p class="text-center text-muted mb-5">Успейте воспользоваться специальными предложениями и скидками.</p>
       <div class="row g-4">
         {% for promotion in page.promotions.all %}

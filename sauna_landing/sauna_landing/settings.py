@@ -10,103 +10,78 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 from pathlib import Path
+
 from dotenv import load_dotenv
 
-import structlog
+PROJECT_DIR = Path(__file__).resolve().parent
+BASE_DIR = PROJECT_DIR.parent
+ROOT_DIR = BASE_DIR.parent
 
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "json": {
-            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
-        },
-        "structlog": {
-            "()": "structlog.stdlib.ProcessorFormatter",
-            "processor": structlog.dev.ConsoleRenderer(),
-            "foreign_pre_chain": [
-                structlog.stdlib.add_logger_name,
-                structlog.stdlib.add_log_level,
-                structlog.processors.TimeStamper(fmt="iso"),
-            ],
-        },
-    },
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-            "formatter": "structlog",
-        },
-        "django_request_handler": {
-            "class": "logging.StreamHandler",
-            "formatter": "json",
-        },
-    },
-    "loggers": {
-        "django": {
-            "handlers": ["console"],
-            "level": "INFO",
-            "propagate": False,
-        },
-        "django.server": {
-            "handlers": ["django_request_handler"],
-            "level": "INFO",
-            "propagate": False,
-        },
-        "": {
-            "handlers": ["console"],
-            "level": "INFO",
-        },
-    },
-}
-
-structlog.configure(
-    processors=[
-        structlog.stdlib.add_logger_name,
-        structlog.stdlib.add_log_level,
-        structlog.processors.TimeStamper(fmt="iso"),
-        structlog.processors.JSONRenderer(),
-    ],
-    context_class=dict,
-    logger_factory=structlog.stdlib.LoggerFactory(),
-    wrapper_class=structlog.stdlib.BoundLogger,
-    cache_logger_on_first_use=True,
-)
+# Environment variables injected by Docker always take precedence.  For local
+# development, .env.local can override the shareable defaults in .env.
+load_dotenv(ROOT_DIR / ".env", override=False)
+load_dotenv(ROOT_DIR / ".env.local", override=True)
 
 
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-BASE_DIR = os.path.dirname(PROJECT_DIR)
-ROOT_DIR = Path(BASE_DIR) / ".."
-env_local_path = ROOT_DIR / ".env.local"
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
-if env_local_path.exists():
-    load_dotenv(dotenv_path=env_local_path, override=False)
-else:
-    load_dotenv(override=False)
+def env(name, default=None):
+    """Return a required environment variable, or a deliberate default."""
+    value = os.getenv(name, default)
+    if value is None or value == "":
+        raise RuntimeError(f"{name} must be set")
+    return value
+
+
+def env_bool(name, default=False):
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
+def env_int(name, default):
+    return int(os.getenv(name, default))
+
+
+def env_list(name, default=""):
+    return [
+        item.strip() for item in os.getenv(name, default).split(",") if item.strip()
+    ]
+
 
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("POSTGRES_DB"),
-        "USER": os.environ.get("POSTGRES_USER"),
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
-        "HOST": os.environ.get("DB_HOST"),
-        "PORT": "5432",
+        "NAME": env("POSTGRES_DB"),
+        "USER": env("POSTGRES_USER"),
+        "PASSWORD": env("POSTGRES_PASSWORD"),
+        "HOST": env("DB_HOST"),
+        "PORT": env("DB_PORT", "5432"),
+        "CONN_MAX_AGE": env_int("POSTGRES_CONN_MAX_AGE", 60),
     }
 }
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-x8gl*us_cb8eq*aujzb^l-r&db7x4##7y4ibi@8gv1zjmjf**3"
+DEBUG = env_bool("DJANGO_DEBUG")
+SECRET_KEY = env("SECRET_KEY")
+PUBLIC_HOST = env("HOST", "localhost")
+ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS", PUBLIC_HOST.split(":", 1)[0])
+CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS")
 
-# SECURITY WARNING: define the correct hosts in production!
-ALLOWED_HOSTS = ["*"]
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SECURE_SSL_REDIRECT = env_bool("DJANGO_SECURE_SSL_REDIRECT")
+SESSION_COOKIE_SECURE = env_bool("DJANGO_SESSION_COOKIE_SECURE", SECURE_SSL_REDIRECT)
+CSRF_COOKIE_SECURE = env_bool("DJANGO_CSRF_COOKIE_SECURE", SECURE_SSL_REDIRECT)
+SECURE_HSTS_SECONDS = env_int("DJANGO_SECURE_HSTS_SECONDS", 0)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = env_bool("DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS")
+SECURE_HSTS_PRELOAD = env_bool("DJANGO_SECURE_HSTS_PRELOAD")
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = "same-origin"
 
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_BACKEND = env(
+    "DJANGO_EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend"
+)
+DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", "webmaster@localhost")
 
 INSTALLED_APPS = [
     "wagtail.contrib.forms",
@@ -129,21 +104,19 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "home",
-    "search",
+    "home.apps.HomeConfig",
     "base",
     "storages",
 ]
 
 MIDDLEWARE = [
-
+    "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django.middleware.security.SecurityMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
 ]
 
@@ -153,7 +126,7 @@ TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [
-            os.path.join(PROJECT_DIR, "templates"),
+            PROJECT_DIR / "templates",
         ],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -209,19 +182,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATICFILES_FINDERS = [
-    "django.contrib.staticfiles.finders.FileSystemFinder",
-    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-]
-
-STATICFILES_DIRS = [
-    os.path.join(PROJECT_DIR, "static"),
-]
-
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_ROOT = BASE_DIR / "static"
 STATIC_URL = "/static/"
 
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "/media/"
 
 # Default storage settings, with the staticfiles storage updated.
@@ -242,7 +206,7 @@ STORAGES = {
 
 # Wagtail settings
 
-WAGTAIL_SITE_NAME = "sauna_landing"
+WAGTAIL_SITE_NAME = env("WAGTAIL_SITE_NAME", "Sauna landing")
 
 # Search
 # https://docs.wagtail.org/en/stable/topics/search/backends.html
@@ -254,7 +218,7 @@ WAGTAILSEARCH_BACKENDS = {
 
 # Base URL to use when referring to full URLs within the Wagtail admin backend -
 # e.g. in notification emails. Don't include '/admin' or a trailing slash
-WAGTAILADMIN_BASE_URL = "http://example.com"
+WAGTAILADMIN_BASE_URL = env("WAGTAILADMIN_BASE_URL", f"http://{PUBLIC_HOST}")
 
 # Allowed file extensions for documents in the document library.
 # This can be omitted to allow all files, but note that this may present a security risk
@@ -273,20 +237,18 @@ WAGTAILDOCS_EXTENSIONS = [
     "zip",
 ]
 
-WAGTAILIMAGES_MAX_UPLOAD_SIZE = 50 * 1024 * 1024  # 50 MB
+WAGTAILIMAGES_MAX_UPLOAD_SIZE = env_int(
+    "WAGTAILIMAGES_MAX_UPLOAD_SIZE", 50 * 1024 * 1024
+)
 
-
-AWS_ACCESS_KEY_ID = "minioadmin"
-AWS_SECRET_ACCESS_KEY = "minioadminpassword"
-
-AWS_STORAGE_BUCKET_NAME = "media"
-
-AWS_S3_ENDPOINT_URL = "http://minio:9000"
-
-AWS_S3_REGION_NAME = "us-east-1"
-
+AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID", env("MINIO_ROOT_USER"))
+AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY", env("MINIO_ROOT_PASSWORD"))
+AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME", "media")
+AWS_S3_ENDPOINT_URL = env(
+    "AWS_S3_ENDPOINT_URL", env("MINIO_STORAGE_ENDPOINT", "http://minio:9000")
+)
+AWS_S3_REGION_NAME = env("AWS_S3_REGION_NAME", "us-east-1")
 AWS_S3_ADDRESSING_STYLE = "path"
-
 AWS_QUERYSTRING_AUTH = False
 
 AWS_DEFAULT_ACL = None
@@ -294,7 +256,7 @@ AWS_DEFAULT_ACL = None
 AWS_S3_FILE_OVERWRITE = False
 
 
-AWS_S3_CUSTOM_DOMAIN = "localhost:80/media"
-AWS_S3_USE_SSL = False
+AWS_S3_CUSTOM_DOMAIN = env("AWS_S3_CUSTOM_DOMAIN", f"{PUBLIC_HOST}/media")
+AWS_S3_USE_SSL = env_bool("AWS_S3_USE_SSL")
 AWS_LOCATION = ""
-AWS_S3_URL_PROTOCOL = 'http:'
+AWS_S3_URL_PROTOCOL = env("AWS_S3_URL_PROTOCOL", "http:")
